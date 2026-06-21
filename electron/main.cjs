@@ -11,14 +11,24 @@
 //  - Renderer stays sandboxed: contextIsolation on, nodeIntegration off. Native
 //    Steam access (Phase 5) will live HERE in the main process and be exposed to
 //    the renderer only through electron/preload.cjs.
-//  - Steam overlay launch flags (in-process-gpu, disable-direct-composition)
-//    are deliberately NOT added yet — they land in Phase 4/5 alongside the
-//    steamworks.js integration and overlay testing.
+//  - Steam achievements/overlay/cloud live in ./steam.cjs (Phase 5) and are
+//    exposed to the renderer through electron/preload.cjs. steamworks.js is a
+//    lazy, optional require there, so this build runs fine without it.
 
 const { app, BrowserWindow, protocol, net, shell, ipcMain, Menu } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
+const steam = require('./steam.cjs');
+
+// Steam overlay launch flags — MUST be set before the app is ready. Windows-
+// only, gated on an AppID being configured (steam_appid.txt / STEAM_APPID).
+// They let the Steam overlay hook the Electron renderer; without them the
+// overlay can render white (the DirectComposition symptom). ⚠️ verify on-device.
+if (steam.shouldApplyOverlayFlags()) {
+  app.commandLine.appendSwitch('in-process-gpu');
+  app.commandLine.appendSwitch('disable-direct-composition');
+}
 
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const DEV_URL = process.env.ELECTRON_START_URL; // set by scripts/electron-dev.mjs
@@ -97,6 +107,11 @@ function createWindow() {
     show: false,
     backgroundColor: '#0f1524', // matches app background; avoids white flash
     title: 'Dynasty Manager',
+    // Window/taskbar icon. Public assets are copied to dist/ root by Vite, so
+    // this resolves both in dev and inside the packaged asar. (The packaged
+    // app/installer icon is a separate electron-builder concern — see
+    // electron-builder.json TODO for the production multi-res .ico.)
+    icon: path.join(DIST_DIR, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -128,6 +143,10 @@ function createWindow() {
   } else {
     mainWindow.loadURL('app://local/index.html');
   }
+
+  // Enable the Steam overlay for this renderer (no-op off-Windows / when Steam
+  // is unavailable). Done after the window exists so the GPU context is live.
+  steam.enableOverlay();
 }
 
 // --- Single-instance lock ----------------------------------------------------
@@ -166,3 +185,22 @@ ipcMain.handle('app:openExternal', (_event, url) => {
   }
   return Promise.resolve();
 });
+
+// --- IPC: Steam bridge (achievements + Auto-Cloud save mirror) ---------------
+// All handlers are safe no-ops when Steam is unavailable, so the renderer can
+// call them unconditionally and branch only on `steam:isAvailable`.
+ipcMain.handle('steam:isAvailable', () => steam.isAvailable());
+
+// Synchronous variant — the preload resolves availability once at startup so
+// the renderer can expose a cheap sync `isAvailable()` getter.
+ipcMain.on('steam:isAvailableSync', (event) => {
+  event.returnValue = steam.isAvailable();
+});
+
+ipcMain.handle('steam:unlockAchievement', (_event, id) => steam.unlockAchievement(id));
+
+ipcMain.handle('steam:cloudSave', (_event, slot, blob) =>
+  steam.cloudSave(app.getPath('userData'), slot, blob));
+
+ipcMain.handle('steam:cloudLoad', (_event, slot) =>
+  steam.cloudLoad(app.getPath('userData'), slot));
