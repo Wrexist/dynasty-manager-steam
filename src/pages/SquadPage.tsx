@@ -210,8 +210,8 @@ const SquadPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-4 space-y-4">
-      <div className="px-4 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] pb-4 space-y-4">
+      <div className="px-4 lg:px-8 space-y-4">
         <PageHint screen="squad" title={PAGE_HINTS.squad.title} body={PAGE_HINTS.squad.body} />
 
         {/* Header */}
@@ -224,6 +224,8 @@ const SquadPage = () => {
           </div>
         </div>
 
+        {/* Desktop: summary cards + gaps span the full width in a balanced grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
         {/* Squad Depth Summary */}
         <GlassPanel className="p-3">
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Squad Depth</p>
@@ -359,16 +361,18 @@ const SquadPage = () => {
             </GlassPanel>
           );
         })()}
+        </div>
+        {/* end summary grid */}
 
         {/* Position Filter */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {POSITION_FILTERS.map((f, i) => (
             <button
               key={f.label}
               onClick={() => { hapticLight(); setPosFilter(i); }}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors active:scale-[0.95]',
-                posFilter === i ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'
+                'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors active:scale-[0.95] cursor-pointer',
+                posFilter === i ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
               )}
             >
               {f.label}
@@ -377,7 +381,7 @@ const SquadPage = () => {
         </div>
 
         {/* Status Filters */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible">
           {([
             { key: 'injured' as SquadStatusFilter, label: 'Injured' },
             // Club-economy filters (transfer list / contract / loans) are
@@ -396,10 +400,10 @@ const SquadPage = () => {
               key={key}
               onClick={() => toggleStatus(key)}
               className={cn(
-                'px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors border whitespace-nowrap shrink-0',
+                'px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors border whitespace-nowrap shrink-0 cursor-pointer',
                 statusFilters.has(key)
                   ? 'border-primary/50 bg-primary/10 text-primary'
-                  : 'border-border/30 bg-muted/30 text-muted-foreground'
+                  : 'border-border/30 bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:border-border/50'
               )}
             >
               {label}
@@ -408,7 +412,7 @@ const SquadPage = () => {
         </div>
 
         {/* Sort */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible">
           {(isWorldCup ? WC_SORT_OPTIONS : SORT_OPTIONS).map(s => (
             <button
               key={s}
@@ -422,8 +426,8 @@ const SquadPage = () => {
                 }
               }}
               className={cn(
-                'px-2 py-1 rounded text-[10px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 active:scale-[0.95] inline-flex items-center gap-0.5',
-                sortBy === s ? 'text-primary font-bold' : 'text-muted-foreground'
+                'px-2 py-1 rounded text-[10px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 active:scale-[0.95] inline-flex items-center gap-0.5 cursor-pointer',
+                sortBy === s ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'
               )}
             >
               <span>{s}</span>
@@ -457,7 +461,7 @@ const SquadPage = () => {
             )}
           </GlassPanel>
         ) : (
-          <div className="grid grid-cols-2 gap-3 justify-items-center pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 justify-items-center pt-1">
             {squad.map((player, i) => {
               const isStarter = lineupSet.has(player.id);
               const isSub = subsSet.has(player.id);

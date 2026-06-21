@@ -150,7 +150,7 @@ const BoardPage = () => {
 
   return (
     <motion.div
-      className="max-w-lg mx-auto px-4 py-4 space-y-3"
+      className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-3 lg:[column-fill:balance] lg:columns-2 xl:columns-3 lg:gap-5 lg:space-y-0 [&>*]:mb-3 lg:[&>*]:mb-5 [&>*]:break-inside-avoid"
       variants={stagger}
       initial="hidden"
       animate="show"
@@ -162,7 +162,7 @@ const BoardPage = () => {
       />
 
       {/* Header */}
-      <motion.div variants={fadeUp} className="flex items-center gap-3">
+      <motion.div variants={fadeUp} className="flex items-center gap-3 lg:[column-span:all]">
         <h2 className="text-lg font-display font-bold text-foreground">Board Room</h2>
         <div className="flex-1 h-px bg-gradient-to-r from-primary/40 to-transparent" />
       </motion.div>

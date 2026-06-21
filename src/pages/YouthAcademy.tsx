@@ -105,11 +105,13 @@ const YouthAcademy = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8">
       <PageHint screen="youthAcademy" title={PAGE_HINTS.youthAcademy.title} body={PAGE_HINTS.youthAcademy.body} />
-      <div className="px-4 pb-4 space-y-3">
+      <div className="pb-4 space-y-3">
         <h2 className="text-lg font-display font-bold text-foreground">Youth Academy</h2>
 
+        {/* Stats + Quality side-by-side on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
         {/* Academy Stats Summary */}
         <GlassPanel className="p-3">
           <div className="grid grid-cols-4 gap-3">
@@ -166,6 +168,7 @@ const YouthAcademy = () => {
             </div>
           </div>
         </GlassPanel>
+        </div>
 
         {/* Prospects */}
         {youthAcademy.prospects.length > 0 ? (
@@ -181,7 +184,7 @@ const YouthAcademy = () => {
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-3 justify-items-center pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 justify-items-center pt-1">
               {youthAcademy.prospects.map((prospect, i) => {
                 const player = players[prospect.playerId];
                 if (!player) return null;

@@ -45,9 +45,9 @@ const ScoutingPage = () => {
   const findListing = (playerId: string) => transferMarket.find(l => l.playerId === playerId) || null;
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="mx-auto w-full max-w-[100rem]">
       <PageHint screen="scouting" title={PAGE_HINTS.scouting.title} body={PAGE_HINTS.scouting.body} />
-      <div className="px-4 pb-4 space-y-3">
+      <div className="px-4 lg:px-8 pb-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-display font-bold text-foreground">Scouting</h2>
           <span className="text-xs text-muted-foreground">
@@ -71,7 +71,10 @@ const ScoutingPage = () => {
           ))}
         </div>
 
-        {activeTab === 'Overview' && (<>
+        {activeTab === 'Overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-start">
+        {/* SIDEBAR (lg): assignments, ad reward, send scout */}
+        <div className="space-y-3 lg:col-span-1 lg:order-2">
         {/* Active Assignments */}
         {scouting.assignments.length > 0 && (
           <div className="space-y-2">
@@ -111,6 +114,48 @@ const ScoutingPage = () => {
         {/* Ad Reward: Reveal Potential */}
         <AdRewardButton rewardType="scout_potential" onRewardClaimed={() => { useGameStore.getState().boostScoutReports(); }} />
 
+        {/* Assign New Scout (in sidebar on lg) */}
+        {scouting.assignments.length < scouting.maxAssignments && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">Send Scout</h3>
+            {REGION_INFO.map(({ region, label, weeks, description }) => (
+              <GlassPanel
+                key={region}
+                className="p-3 cursor-pointer hover:border-primary/30 transition-colors"
+                onClick={() => {
+                  // Only toast success when the assignment actually happened —
+                  // at max assignments the action no-ops and returns failure.
+                  const result = assignScout(region);
+                  if (!result.success) {
+                    errorToast(result.message || 'Unable to assign scout.');
+                    return;
+                  }
+                  hapticLight();
+                  infoToast('Scout Assigned', `Scouting ${label} region`);
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-primary shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{label}</p>
+                      <p className="text-[10px] text-muted-foreground">{description}</p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-xs text-muted-foreground">{weeks}w</span>
+                    <p className="text-[10px] text-muted-foreground/60">{formatMoney(SCOUTING_COST_PER_ASSIGNMENT)}/wk</p>
+                  </div>
+                </div>
+              </GlassPanel>
+            ))}
+          </div>
+        )}
+        </div>
+        {/* end SIDEBAR */}
+
+        {/* MAIN (lg): scout reports grid + empty states */}
+        <div className="space-y-3 lg:col-span-2 lg:order-1">
         {/* Scout Reports */}
         {scouting.reports.length === 0 && scouting.assignments.length > 0 && (
           <GlassPanel className="p-8 text-center">
@@ -121,6 +166,7 @@ const ScoutingPage = () => {
         {scouting.reports.length > 0 && (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Scout Reports</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
             {scouting.reports.slice(0, 10).map(report => {
               const player = players[report.playerId];
               if (!player) return null;
@@ -233,44 +279,7 @@ const ScoutingPage = () => {
                 </GlassPanel>
               );
             })}
-          </div>
-        )}
-
-        {/* Assign New Scout */}
-        {scouting.assignments.length < scouting.maxAssignments && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">Send Scout</h3>
-            {REGION_INFO.map(({ region, label, weeks, description }) => (
-              <GlassPanel
-                key={region}
-                className="p-3 cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => {
-                  // Only toast success when the assignment actually happened —
-                  // at max assignments the action no-ops and returns failure.
-                  const result = assignScout(region);
-                  if (!result.success) {
-                    errorToast(result.message || 'Unable to assign scout.');
-                    return;
-                  }
-                  hapticLight();
-                  infoToast('Scout Assigned', `Scouting ${label} region`);
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-primary shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{label}</p>
-                      <p className="text-[10px] text-muted-foreground">{description}</p>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-xs text-muted-foreground">{weeks}w</span>
-                    <p className="text-[10px] text-muted-foreground/60">{formatMoney(SCOUTING_COST_PER_ASSIGNMENT)}/wk</p>
-                  </div>
-                </div>
-              </GlassPanel>
-            ))}
+            </div>
           </div>
         )}
 
@@ -290,10 +299,13 @@ const ScoutingPage = () => {
             )}
           </GlassPanel>
         )}
-        </>)}
+        </div>
+        {/* end MAIN */}
+        </div>
+        )}
 
         {activeTab === 'Watch List' && (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
             {scoutWatchList.length > 0 ? (
               scoutWatchList.map(pid => {
                 const player = players[pid];
@@ -357,7 +369,7 @@ const ScoutingPage = () => {
                 );
               })
             ) : (
-              <GlassPanel className="p-6 text-center">
+              <GlassPanel className="p-6 text-center lg:col-span-2 xl:col-span-3">
                 <Star className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">No players on watch list</p>
                 <p className="text-xs text-muted-foreground mt-1">Add players from scout reports to keep track of them</p>

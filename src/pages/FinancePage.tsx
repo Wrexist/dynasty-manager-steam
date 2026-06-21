@@ -67,7 +67,7 @@ const FinancePage = () => {
 
   return (
     <>
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-3">
       <h2 className="text-lg font-display font-bold text-foreground">Finance</h2>
       <PageHint screen="finance" title={PAGE_HINTS.finance.title} body={PAGE_HINTS.finance.body} />
 
@@ -79,8 +79,12 @@ const FinancePage = () => {
         </div>
       )}
 
+      {/* Desktop dashboard: left column = budget + chart + forecast; right column = breakdowns + FFP + squad/earners */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-start">
+      {/* LEFT (charts + headline) — spans 2 of 3 on desktop */}
+      <div className="space-y-3 lg:col-span-2">
       {/* Budget Overview */}
-      <GlassPanel className="p-4 cursor-pointer" onClick={() => { setFinanceSheetMode('budget'); setFinanceSheetOpen(true); }}>
+      <GlassPanel className="p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => { setFinanceSheetMode('budget'); setFinanceSheetOpen(true); }}>
         <div className="flex items-center gap-2 mb-3">
           <DollarSign className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Transfer Budget</h3>
@@ -142,10 +146,15 @@ const FinancePage = () => {
           )}
         </GlassPanel>
       )}
+      </div>
+      {/* end LEFT column */}
+
+      {/* RIGHT (breakdowns, FFP, squad, earners) */}
+      <div className="space-y-3 lg:col-span-1">
 
       {/* Income vs Expenses */}
       <div className="grid grid-cols-2 gap-3">
-        <GlassPanel className="p-3 cursor-pointer" onClick={() => { setFinanceSheetMode('income'); setFinanceSheetOpen(true); }}>
+        <GlassPanel className="p-3 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => { setFinanceSheetMode('income'); setFinanceSheetOpen(true); }}>
           <div className="flex items-center gap-1.5 mb-1">
             <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
             <span className="text-xs text-muted-foreground">Weekly Income</span>
@@ -162,7 +171,7 @@ const FinancePage = () => {
             </div>
           </div>
         </GlassPanel>
-        <GlassPanel className="p-3 cursor-pointer" onClick={() => { setFinanceSheetMode('expenses'); setFinanceSheetOpen(true); }}>
+        <GlassPanel className="p-3 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => { setFinanceSheetMode('expenses'); setFinanceSheetOpen(true); }}>
           <div className="flex items-center gap-1.5 mb-1">
             <ArrowDownRight className="w-3.5 h-3.5 text-destructive" />
             <span className="text-xs text-muted-foreground">Weekly Expenses</span>
@@ -268,6 +277,10 @@ const FinancePage = () => {
           ))}
         </div>
       </GlassPanel>
+      </div>
+      {/* end RIGHT column */}
+      </div>
+      {/* end dashboard grid */}
     </div>
     <FinanceBreakdownSheet open={financeSheetOpen} onOpenChange={setFinanceSheetOpen} mode={financeSheetMode} />
     </>

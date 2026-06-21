@@ -125,7 +125,7 @@ const SuperCupPage = () => {
 
   if (!hasDomestic && !hasContinental) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="mx-auto w-full max-w-3xl px-4 lg:px-8 py-6">
         <div className="text-center text-muted-foreground py-12">
           <Trophy className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p className="text-sm">No Super Cup matches this season.</p>
@@ -135,7 +135,7 @@ const SuperCupPage = () => {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+    <div className="mx-auto w-full max-w-3xl px-4 lg:px-8 py-6 space-y-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -144,12 +144,14 @@ const SuperCupPage = () => {
         <TournamentHeader competition="super_cup" subtitle="Season opener" />
       </motion.div>
 
-      {domesticSuperCup && (
-        <SuperCupMatchCard match={domesticSuperCup} clubs={clubs} playerClubId={playerClubId} index={0} />
-      )}
-      {continentalSuperCup && (
-        <SuperCupMatchCard match={continentalSuperCup} clubs={clubs} playerClubId={playerClubId} index={1} />
-      )}
+      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
+        {domesticSuperCup && (
+          <SuperCupMatchCard match={domesticSuperCup} clubs={clubs} playerClubId={playerClubId} index={0} />
+        )}
+        {continentalSuperCup && (
+          <SuperCupMatchCard match={continentalSuperCup} clubs={clubs} playerClubId={playerClubId} index={1} />
+        )}
+      </div>
     </div>
   );
 };

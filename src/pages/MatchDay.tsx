@@ -822,7 +822,7 @@ const MatchDayInner = () => {
   );
 
   return (
-    <div className={cn("max-w-lg mx-auto px-4 py-4 space-y-3", stadiumTheme && `stadium-${stadiumTheme.replace('stadium-', '')}`, pitchSkin && `pitch-${pitchSkin.replace('pitch-', '')}`)}>
+    <div className={cn("mx-auto w-full max-w-lg lg:max-w-5xl px-4 lg:px-8 py-4 space-y-3", stadiumTheme && `stadium-${stadiumTheme.replace('stadium-', '')}`, pitchSkin && `pitch-${pitchSkin.replace('pitch-', '')}`)}>
       {phase === 'pre' && <PageHint screen="matchDay" title={PAGE_HINTS.matchDay.title} body={PAGE_HINTS.matchDay.body} />}
       <ScoreHeader
         phase={phase}
@@ -1357,7 +1357,83 @@ const MatchDayInner = () => {
 
       {/* Live Controls (first or second half) — hidden during key moments */}
       {isLive && !keyMoment && (
-        <>
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-4 lg:items-start lg:gap-y-0">
+          {/* Match view column (pitch / commentary feed) — left/wide on desktop,
+              below the controls on mobile (preserves the original phone order). */}
+          <div className="space-y-3 order-2 lg:order-1">
+          {/* Match-view toggle: pitch / split / commentary. Always a toggle,
+              never forced — persists the user's choice across sessions. */}
+          <div className="flex gap-1 rounded-lg bg-muted/30 p-1">
+            {([
+              { k: 'pitch', label: 'Pitch' },
+              { k: 'split', label: 'Split' },
+              { k: 'commentary', label: 'Log' },
+            ] as { k: MatchViewMode; label: string }[]).map(({ k, label }) => (
+              <button
+                key={k}
+                onClick={() => changeMatchView(k)}
+                aria-pressed={matchView === k}
+                className={cn(
+                  'flex-1 rounded-md py-1.5 text-[11px] font-semibold transition-all active:scale-[0.98] cursor-pointer',
+                  matchView === k ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {matchView !== 'commentary' && (
+            <ErrorBoundary fallback={() => null}>
+              <Suspense fallback={<div className="w-full rounded-xl bg-black/20 border border-border/40" style={{ aspectRatio: '68 / 104' }} />}>
+                <PitchView
+                  match={match}
+                  homeClub={homeClub}
+                  awayClub={awayClub}
+                  events={visibleEvents}
+                  minute={currentMin}
+                  playerIsHome={playerClubId === match.homeClubId}
+                  homeTactics={match.homeClubId === playerClubId ? tactics : (homeClub.aiManagerProfile?.defaultTactics ?? DEFAULT_PITCH_TACTICS)}
+                  awayTactics={match.awayClubId === playerClubId ? tactics : (awayClub.aiManagerProfile?.defaultTactics ?? DEFAULT_PITCH_TACTICS)}
+                  players={players}
+                  orientation={matchView === 'split' ? 'landscape' : 'portrait'}
+                  showOverall={settings.showOverallOnPitch}
+                  reducedMotion={settings.reducedMotion || settings.performanceMode}
+                  msPerMinute={speed}
+                />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+
+          {/* Event Log — cap by viewport but never collapse below ~2 events on
+              short landscape screens (30vh ≈ 112px there). On desktop the side
+              column carries controls, so let the log breathe taller. */}
+          {matchView !== 'pitch' && (
+          <GlassPanel className="p-4 max-h-[min(40vh,300px)] lg:max-h-[min(70vh,640px)] overflow-y-auto">
+            <div className="space-y-2" aria-live="polite" aria-label="Match events">
+              {visibleEvents.filter(e => e.type !== 'kickoff').map((ev, i) => {
+                const description = isStructuredEvent(ev.type)
+                  ? undefined
+                  : getEnrichedDescription(ev, visibleEvents, match.homeClubId, playerClubId === match.homeClubId);
+                return (
+                  <CommentaryRow
+                    key={i}
+                    event={ev}
+                    players={players}
+                    clubs={clubs}
+                    fallbackColor={virtualClubs?.[ev.clubId]?.color}
+                    description={description}
+                  />
+                );
+              })}
+              <div ref={eventsEndRef} />
+            </div>
+          </GlassPanel>
+          )}
+          </div>
+
+          {/* Controls column */}
+          <div className="space-y-3 order-1 lg:order-2">
           {paused ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2 }}>
               <GlassPanel className="p-4 border-primary/40 space-y-4">
@@ -1649,80 +1725,8 @@ const MatchDayInner = () => {
               </div>
             </div>
           )}
-
-          {/* Match-view toggle: pitch / split / commentary. Always a toggle,
-              never forced — persists the user's choice across sessions. */}
-          <div className="flex gap-1 rounded-lg bg-muted/30 p-1">
-            {([
-              { k: 'pitch', label: 'Pitch' },
-              { k: 'split', label: 'Split' },
-              { k: 'commentary', label: 'Log' },
-            ] as { k: MatchViewMode; label: string }[]).map(({ k, label }) => (
-              <button
-                key={k}
-                onClick={() => changeMatchView(k)}
-                aria-pressed={matchView === k}
-                className={cn(
-                  'flex-1 rounded-md py-1.5 text-[11px] font-semibold transition-all active:scale-[0.98]',
-                  matchView === k ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {label}
-              </button>
-            ))}
           </div>
-
-          {matchView !== 'commentary' && (
-            <ErrorBoundary fallback={() => null}>
-              <Suspense fallback={<div className="w-full rounded-xl bg-black/20 border border-border/40" style={{ aspectRatio: '68 / 104' }} />}>
-                <PitchView
-                  match={match}
-                  homeClub={homeClub}
-                  awayClub={awayClub}
-                  events={visibleEvents}
-                  minute={currentMin}
-                  playerIsHome={playerClubId === match.homeClubId}
-                  homeTactics={match.homeClubId === playerClubId ? tactics : (homeClub.aiManagerProfile?.defaultTactics ?? DEFAULT_PITCH_TACTICS)}
-                  awayTactics={match.awayClubId === playerClubId ? tactics : (awayClub.aiManagerProfile?.defaultTactics ?? DEFAULT_PITCH_TACTICS)}
-                  players={players}
-                  orientation={matchView === 'split' ? 'landscape' : 'portrait'}
-                  showOverall={settings.showOverallOnPitch}
-                  reducedMotion={settings.reducedMotion || settings.performanceMode}
-                  msPerMinute={speed}
-                />
-              </Suspense>
-            </ErrorBoundary>
-          )}
-
-          {/* Event Log — cap by viewport but never collapse below ~2 events on
-              short landscape screens (30vh ≈ 112px there). */}
-          {matchView !== 'pitch' && (
-          <GlassPanel className="p-4 max-h-[min(40vh,300px)] overflow-y-auto">
-            <div className="space-y-2" aria-live="polite" aria-label="Match events">
-              {visibleEvents.filter(e => e.type !== 'kickoff').map((ev, i) => {
-                // Structured events (goals, cards, shots, subs...) render as
-                // clear label-pill + player-chip rows. Ambient commentary and
-                // tactical prompts keep their prose styling via CommentaryRow's
-                // fallback branch.
-                const description = isStructuredEvent(ev.type)
-                  ? undefined
-                  : getEnrichedDescription(ev, visibleEvents, match.homeClubId, playerClubId === match.homeClubId);
-                return (
-                  <CommentaryRow
-                    key={i}
-                    event={ev}
-                    players={players}
-                    clubs={clubs}
-                    fallbackColor={virtualClubs?.[ev.clubId]?.color}
-                    description={description}
-                  />
-                );
-              })}
-              <div ref={eventsEndRef} />
-            </div>
-          </GlassPanel>
-          )}
-        </>
+        </div>
       )}
 
       {/* Key Moment Decision Overlay — injury moments handled by SubstitutionSheet directly */}

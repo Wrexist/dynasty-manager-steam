@@ -429,10 +429,10 @@ const PacksPage = () => {
   const recentPacks = openedPacks.slice(0, RECENT_PULLS_LIMIT);
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="mx-auto w-full max-w-[90rem] px-4 lg:px-8">
       <PageHint screen="packs" title={PAGE_HINTS.packs.title} body={PAGE_HINTS.packs.body} />
 
-      <div className="px-4 pb-6 space-y-3">
+      <div className="pb-6 space-y-3">
         {/* Compact status row — budget + squad + reset countdown all on
             one line. The "Player Packs" title block above this used to
             cost ~60px of vertical space before the pack tile even
@@ -473,9 +473,12 @@ const PacksPage = () => {
           </div>
         </div>
 
+        {/* Desktop: featured hero beside the full pack grid so the shop fills
+            the width instead of a single narrow column. */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {/* Featured hero — header inlined to save vertical space; the
             flame + label + pack are visually one unit. */}
-        <div>
+        <div className="lg:col-span-1">
           <div className="flex items-center gap-1.5 mb-1.5">
             <Flame className="w-3.5 h-3.5 text-primary" />
             <h3 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Featured Pack</h3>
@@ -494,9 +497,9 @@ const PacksPage = () => {
         </div>
 
         {/* Standard pack grid */}
-        <div>
+        <div className="lg:col-span-2">
           <h3 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">All Packs</h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
             {nonFeatured.map(tier => (
               <PackShopCard
                 key={tier.key}
@@ -511,6 +514,7 @@ const PacksPage = () => {
               />
             ))}
           </div>
+        </div>
         </div>
 
         {/* Guarantee Tracker — premium "what's coming next" reward meter.

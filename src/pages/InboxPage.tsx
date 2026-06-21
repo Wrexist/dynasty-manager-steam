@@ -230,8 +230,23 @@ const InboxPage = () => {
     markMessageRead(id);
   };
 
+  // Desktop reading pane — resolve the currently-expanded message so the
+  // right-hand pane can render its full body + actions (master-detail at lg).
+  const selectedMsg = expandedId ? filtered.find(m => m.id === expandedId) ?? null : null;
+  const selectedColors = selectedMsg ? getMessageColors(selectedMsg) : null;
+  const selectedAction = selectedMsg ? getMessageAction(selectedMsg, gameMode) : null;
+  const selectedHasTransferTalk = !!selectedMsg && selectedMsg.type === 'transfer' && !!selectedMsg.playerId && !selectedMsg.actioned && (() => {
+    const player = players[selectedMsg.playerId!];
+    if (!player || !player.wantsToLeave || player.listedForSale) return false;
+    if (player.lastTransferTalkWeek && week - player.lastTransferTalkWeek < TRANSFER_TALK_RETRY_WEEKS) return false;
+    return true;
+  })();
+  const SelectedIcon = selectedMsg ? (typeIcon[selectedMsg.type] || Mail) : Mail;
+
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4">
+      <div className="space-y-3 lg:grid lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-6 lg:space-y-0 lg:items-start">
+      <div className="space-y-3 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
       <PageHint
         screen="inbox"
         title="Inbox"
@@ -703,6 +718,59 @@ const InboxPage = () => {
           </div>
         ))
       )}
+      </div>
+
+      {/* Desktop reading pane — shows the selected message in full, master-detail */}
+      <div className="hidden lg:block lg:sticky lg:top-4 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+        {selectedMsg && selectedColors ? (
+          <GlassPanel className={cn('p-6', selectedColors.border)}>
+            <div className="flex items-start gap-4">
+              <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center shrink-0', selectedColors.iconBg)}>
+                <SelectedIcon className={cn('w-6 h-6', selectedColors.iconText)} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-bold text-foreground font-display leading-tight">{selectedMsg.title}</h3>
+                <p className="text-[11px] text-muted-foreground/70 mt-0.5">Season {selectedMsg.season} · Week {selectedMsg.week}</p>
+              </div>
+            </div>
+            <p className="text-sm text-foreground/85 leading-relaxed mt-4 whitespace-pre-line">{selectedMsg.body}</p>
+            {(selectedHasTransferTalk || selectedAction || (selectedMsg.playerId && players[selectedMsg.playerId])) && (
+              <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-border/40">
+                {selectedMsg.playerId && players[selectedMsg.playerId] && !selectedHasTransferTalk && (
+                  <button
+                    onClick={() => { hapticLight(); selectPlayer(selectedMsg.playerId!); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:brightness-125 cursor-pointer bg-primary/10 text-primary"
+                  >
+                    View Player <ExternalLink className="w-3 h-3" />
+                  </button>
+                )}
+                {selectedHasTransferTalk ? (
+                  <button
+                    onClick={() => { hapticMedium(); openTransferTalk(selectedMsg.playerId!); setScreen('dashboard'); }}
+                    className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:brightness-125 cursor-pointer', selectedColors.iconBg, selectedColors.iconText)}
+                  >
+                    Talk to Player <MessageCircle className="w-3 h-3" />
+                  </button>
+                ) : selectedAction ? (
+                  <button
+                    onClick={() => { hapticLight(); if (selectedAction.screen === 'match-review') loadMatchForReview(selectedMsg.week); setScreen(selectedAction.screen); }}
+                    className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:brightness-125 cursor-pointer', selectedColors.iconBg, selectedColors.iconText)}
+                  >
+                    {selectedAction.label} <ExternalLink className="w-3 h-3" />
+                  </button>
+                ) : null}
+              </div>
+            )}
+          </GlassPanel>
+        ) : (
+          <GlassPanel className="p-10 text-center">
+            <MailOpen className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">Select a message to read it here</p>
+            <p className="text-[11px] text-muted-foreground/60 mt-1">Click any message in the list to open it in this pane</p>
+          </GlassPanel>
+        )}
+      </div>
+      </div>
     </div>
   );
 };

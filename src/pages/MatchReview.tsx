@@ -158,7 +158,7 @@ const MatchReview = () => {
 
   if (!currentMatchResult) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="mx-auto w-full max-w-2xl px-4 lg:px-8 py-4">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
           <EmptyState
             icon={Calendar}
@@ -176,7 +176,7 @@ const MatchReview = () => {
   const awayClub = resolveClub(clubs, virtualClubs, match.awayClubId);
   if (!homeClub || !awayClub) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="mx-auto w-full max-w-2xl px-4 lg:px-8 py-4">
         <GlassPanel className="p-6 text-center">
           <Calendar className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">Unable to load match data</p>
@@ -243,7 +243,7 @@ const MatchReview = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <div className="mx-auto w-full max-w-[88rem] px-4 lg:px-8 py-4 space-y-3">
       <PageHint
         screen="match-review"
         title="Match Review"
@@ -321,6 +321,9 @@ const MatchReview = () => {
         </Button>
       </div>
 
+      <div className="lg:grid lg:grid-cols-2 lg:gap-4 lg:items-start space-y-3 lg:space-y-0">
+      {/* Left column */}
+      <div className="space-y-3">
       {/* Key Highlights — animated two-lane timeline of the biggest moments */}
       {(() => {
         if (allHighlights.length === 0) return null;
@@ -646,6 +649,10 @@ const MatchReview = () => {
         </GlassPanel>
       )}
 
+      </div>
+
+      {/* Right column */}
+      <div className="space-y-3">
       {/* Top Performers — the three best-rated players from your side, shown as
           premium player cards (tap to open the player). */}
       {matchPlayerRatings.length > 0 && (() => {
@@ -1039,6 +1046,8 @@ const MatchReview = () => {
         claimContext={xpDoubleClaimContext}
         onRewardClaimed={() => { useGameStore.getState().applyDoubleXP(); }}
       />
+      </div>
+      </div>
 
     </div>
   );

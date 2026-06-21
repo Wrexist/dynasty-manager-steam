@@ -131,7 +131,7 @@ const NationalTeamPage = () => {
   if (!nationalTeam && nationalTeamOffer?.status === 'pending' && managerNationality) {
     const nation = getNation(managerNationality);
     return (
-      <div className="max-w-lg mx-auto px-4 py-5 pb-24 space-y-5">
+      <div className="mx-auto w-full max-w-3xl px-4 py-5 pb-24 space-y-5">
         <PageHint screen="nationalTeam" title={PAGE_HINTS.nationalTeam.title} body={PAGE_HINTS.nationalTeam.body} />
 
         <motion.div
@@ -211,7 +211,7 @@ const NationalTeamPage = () => {
     const progress = isCareer ? Math.min(Math.round((reputation / NT_JOB_MIN_REPUTATION) * 100), 100) : 0;
 
     return (
-      <div className="max-w-lg mx-auto px-4 py-8 text-center space-y-4">
+      <div className="mx-auto w-full max-w-2xl px-4 py-8 text-center space-y-4">
         <Globe className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
         <h2 className="text-lg font-bold text-foreground font-display">No National Team</h2>
         {isCareer && managerNationality ? (
@@ -329,8 +329,10 @@ const NationalTeamPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-5 pb-24 space-y-5">
+    <div className="mx-auto w-full max-w-6xl px-4 lg:px-8 py-5 pb-24 space-y-5">
       <PageHint screen="nationalTeam" title={PAGE_HINTS.nationalTeam.title} body={PAGE_HINTS.nationalTeam.body} />
+      {/* Top info row — header + tournament tile sit side by side on desktop */}
+      <div className="space-y-5 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-5 lg:items-start">
       {/* Header card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -397,7 +399,10 @@ const NationalTeamPage = () => {
           </div>
         </motion.button>
       )}
+      </div>
 
+      {/* Secondary info row — tenure + formation share a row on desktop */}
+      <div className="space-y-5 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-5 lg:items-start">
       {/* Tenure (career mode) */}
       {gameMode === 'career' && careerManager?.nationalTeamAppointedSeason && (
         <div className={cn(LIQUID_GLASS_SURFACE, 'flex items-center gap-3 border border-white/10 px-4 py-3')}>
@@ -469,6 +474,7 @@ const NationalTeamPage = () => {
             <Shuffle className="w-3.5 h-3.5" /> Auto-select best XI
           </button>
         )}
+      </div>
       </div>
 
       {/* Squad Management */}
@@ -624,7 +630,7 @@ const NationalTeamPage = () => {
                       {c}/{quota.recommended} picked
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 justify-items-center">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 justify-items-center">
                     {poolPlayers.map((player) => {
                       const inSquad = squadSet.has(player.id);
                       const disabled = !inSquad && squadPlayers.length >= NATIONAL_SQUAD_SIZE;
@@ -686,7 +692,7 @@ const NationalTeamPage = () => {
                         {groupPlayers.length}
                       </p>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 justify-items-center">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 justify-items-center">
                       {groupPlayers.map((player) => {
                         const isStarter = lineupSet.has(player.id);
                         const isSub = subsSet.has(player.id);
@@ -733,6 +739,7 @@ const NationalTeamPage = () => {
       {nationalTeam.results.length > 0 && (
         <div className="space-y-2">
           <h2 className="text-sm font-bold text-foreground px-1">Recent Results</h2>
+          <div className="space-y-2 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-2">
           {nationalTeam.results.slice(-10).reverse().map((result) => {
             const won = result.goalsFor > result.goalsAgainst;
             const drew = result.goalsFor === result.goalsAgainst;
@@ -759,6 +766,7 @@ const NationalTeamPage = () => {
               </motion.div>
             );
           })}
+          </div>
         </div>
       )}
 

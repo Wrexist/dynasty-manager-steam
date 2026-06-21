@@ -82,7 +82,7 @@ const MerchandisePage = () => {
     : 0;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4 pb-24">
+    <div className="mx-auto w-full max-w-[90rem] px-4 lg:px-8 py-4 space-y-4 pb-24">
       <PageHint
         screen="merchandise"
         title="Merchandise"
@@ -95,6 +95,8 @@ const MerchandisePage = () => {
         <h1 className="text-lg font-display font-bold text-foreground">Merchandise</h1>
       </div>
 
+      {/* Desktop: masonry two-column flow over the management panels. */}
+      <div className="space-y-4 lg:space-y-0 lg:columns-2 lg:gap-4 [&>*]:lg:mb-4 [&>*]:lg:break-inside-avoid">
       {/* Revenue Overview */}
       <GlassPanel className="p-4">
         <div className="flex items-center justify-between mb-2">
@@ -444,6 +446,7 @@ const MerchandisePage = () => {
           </div>
         )}
       </GlassPanel>
+      </div>
     </div>
   );
 };

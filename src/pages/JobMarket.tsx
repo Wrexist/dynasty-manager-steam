@@ -75,7 +75,7 @@ const JobMarket = () => {
     : availableVacancies.slice(0, INITIAL_VACANCIES_SHOWN);
 
   return (
-    <div className="space-y-4 pb-24">
+    <div className="mx-auto w-full max-w-[90rem] px-4 lg:px-8 space-y-4 pb-24">
       <PageHint screen="jobMarket" title={PAGE_HINTS.jobMarket.title} body={PAGE_HINTS.jobMarket.body} />
 
       {/* Board Pitch Interview Overlay */}
@@ -104,12 +104,18 @@ const JobMarket = () => {
             )}
           </GlassPanel>
 
+          {/* Desktop: vacancies/offers main column + actions/summary sidebar */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+          {/* MAIN column */}
+          <div className="space-y-4 lg:col-span-2">
+
           {/* Incoming Offers */}
           {jobOffers.length > 0 && (
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2 px-1">
                 Job Offers ({jobOffers.length})
               </p>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
               {jobOffers.map(offer => (
                 <OfferCard
                   key={offer.id}
@@ -119,6 +125,7 @@ const JobMarket = () => {
                   onNegotiate={negotiateContractOffer}
                 />
               ))}
+              </div>
             </div>
           )}
 
@@ -135,6 +142,7 @@ const JobMarket = () => {
               </GlassPanel>
             ) : (
               <div className="space-y-2">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
                 {displayedVacancies.map(vacancy => (
                   <VacancyCard
                     key={vacancy.id}
@@ -143,6 +151,7 @@ const JobMarket = () => {
                     onApply={handleApply}
                   />
                 ))}
+                </div>
                 {availableVacancies.length > INITIAL_VACANCIES_SHOWN && !showAllVacancies && (
                   <Button
                     variant="ghost"
@@ -166,10 +175,15 @@ const JobMarket = () => {
               </div>
             )}
           </div>
+          </div>
+          {/* end MAIN column */}
+
+          {/* SIDEBAR: actions + career summary */}
+          <div className="space-y-4 lg:col-span-1 lg:sticky lg:top-4">
 
           {/* Return to Club + Resign buttons for employed managers */}
           {careerManager.contract && (
-            <div className="pt-2 space-y-2">
+            <div className="pt-2 lg:pt-0 space-y-2">
               <Button
                 variant="outline"
                 className="w-full h-11 gap-2"
@@ -242,6 +256,10 @@ const JobMarket = () => {
               </div>
             </div>
           </GlassPanel>
+          </div>
+          {/* end SIDEBAR */}
+          </div>
+          {/* end body grid */}
         </>
       )}
     </div>
@@ -253,7 +271,7 @@ function VacancyCard({ vacancy, canApply, onApply }: { vacancy: JobVacancy; canA
   const competitors = vacancy.competitors || [];
 
   return (
-    <GlassPanel className="p-3">
+    <GlassPanel className="p-3 h-full flex flex-col hover:border-primary/30 transition-colors">
       {/* Header: club name + league + status */}
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2 min-w-0">
@@ -364,7 +382,7 @@ function VacancyCard({ vacancy, canApply, onApply }: { vacancy: JobVacancy; canA
 
       <Button
         size="sm"
-        className="w-full h-8 text-xs gap-1.5"
+        className="w-full h-8 text-xs gap-1.5 mt-auto"
         disabled={!canApply || vacancy.applied || vacancy.interviewActive}
         onClick={() => onApply(vacancy.id)}
       >
@@ -445,7 +463,7 @@ function OfferCard({
   const sliderProgress = maxSalary > minSalary ? ((counterSalary - minSalary) / (maxSalary - minSalary)) * 100 : 0;
 
   return (
-    <GlassPanel className="p-3 border-primary/30 mb-2">
+    <GlassPanel className="p-3 border-primary/30 h-full">
       <div className="flex items-center gap-2 mb-2">
         {offer.clubColor ? (
           <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: offer.clubColor }} />

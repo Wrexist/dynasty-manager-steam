@@ -205,7 +205,7 @@ const CupPage = () => {
 
   if (!cup || !cup.ties.length) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6">
         <div className="text-center text-muted-foreground py-12">
           <Trophy className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p className="text-sm">No cup competition this season.</p>
@@ -218,7 +218,7 @@ const CupPage = () => {
   const cupWinner = cup.winner;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6 space-y-6">
       <PageHint screen="cup" title={PAGE_HINTS.cup.title} body={PAGE_HINTS.cup.body} />
 
       {/* Header */}
@@ -283,7 +283,8 @@ const CupPage = () => {
         </motion.div>
       )}
 
-      {/* Rounds */}
+      {/* Rounds — vertical stack on mobile, wide multi-column rounds on desktop */}
+      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-x-8 lg:gap-y-6 lg:items-start">
       {ROUND_ORDER.map((round, i) => {
         const ties = cup.ties.filter(t => t.round === round && t.awayClubId !== CUP_BYE_MARKER);
         if (ties.length === 0) return null;
@@ -312,6 +313,7 @@ const CupPage = () => {
           </motion.div>
         );
       })}
+      </div>
     </div>
   );
 };

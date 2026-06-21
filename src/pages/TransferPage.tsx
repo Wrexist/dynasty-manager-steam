@@ -258,7 +258,7 @@ const TransferPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[110rem] px-4 lg:px-8 py-4 space-y-4">
       <PageHint screen="transfers" title={PAGE_HINTS.transfers.title} body={PAGE_HINTS.transfers.body} />
 
       <div className="flex items-center justify-between">
@@ -285,8 +285,9 @@ const TransferPage = () => {
         )}
       </div>
 
-      {/* Budget & Squad Size */}
-      <GlassPanel className="p-3 space-y-2">
+      {/* Budget & Squad Size + ad reward — row on desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch">
+      <GlassPanel className="p-3 space-y-2 flex flex-col justify-center">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Available Budget</span>
           <AnimatedNumber
@@ -305,8 +306,11 @@ const TransferPage = () => {
 
       {/* Ad Reward: Budget Boost */}
       {transferWindowOpen && (
-        <AdRewardButton rewardType="transfer_budget" onRewardClaimed={() => { useGameStore.getState().applyTransferBudgetBonus(); }} />
+        <div className="flex items-stretch">
+          <AdRewardButton rewardType="transfer_budget" onRewardClaimed={() => { useGameStore.getState().applyTransferBudgetBonus(); }} />
+        </div>
       )}
+      </div>
 
       {/* Closed window planning hints */}
       {!transferWindowOpen && (
@@ -531,6 +535,7 @@ const TransferPage = () => {
               </GlassPanel>
             );
           })()}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
           {marketReveal.visible.map((listing, i) => {
             const p = players[listing.playerId];
             if (!p) return null;
@@ -603,6 +608,7 @@ const TransferPage = () => {
               />
             );
           })}
+          </div>
           {marketReveal.hasMore && (
             <div ref={marketReveal.sentinelRef} aria-hidden className="h-8" />
           )}
@@ -616,6 +622,7 @@ const TransferPage = () => {
           {incomingOffers.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Incoming Offers</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
               {incomingOffers.map((offer, i) => {
                 const p = players[offer.playerId];
                 if (!p) return null;
@@ -677,6 +684,7 @@ const TransferPage = () => {
                   />
                 );
               })}
+              </div>
             </div>
           )}
 
@@ -684,6 +692,7 @@ const TransferPage = () => {
           {outgoingPlayers.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Listed for Sale</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
               {outgoingPlayers.map(p => {
                 const listing = transferMarket.find(l => l.playerId === p.id);
                 return (
@@ -713,6 +722,7 @@ const TransferPage = () => {
                   />
                 );
               })}
+              </div>
             </div>
           )}
 
@@ -720,6 +730,7 @@ const TransferPage = () => {
           {incomingLoanOffers.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Loan Offers Received</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
               {incomingLoanOffers.map(offer => {
                 const p = players[offer.playerId];
                 if (!p) return null;
@@ -764,6 +775,7 @@ const TransferPage = () => {
                   />
                 );
               })}
+              </div>
             </div>
           )}
 
@@ -771,6 +783,7 @@ const TransferPage = () => {
           {outgoingLoanRequests.length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Pending Loan Requests</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
               {outgoingLoanRequests.map(req => {
                 const p = players[req.playerId];
                 if (!p) return null;
@@ -819,6 +832,7 @@ const TransferPage = () => {
                   />
                 );
               })}
+              </div>
             </div>
           )}
 
@@ -831,6 +845,7 @@ const TransferPage = () => {
                 {loansOut.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Players Loaned Out</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
                     {loansOut.map(loan => {
                       const p = players[loan.playerId];
                       if (!p) return null;
@@ -867,12 +882,14 @@ const TransferPage = () => {
                         />
                       );
                     })}
+                    </div>
                   </div>
                 )}
 
                 {loansIn.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Players on Loan (In)</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
                     {loansIn.map(loan => {
                       const p = players[loan.playerId];
                       if (!p) return null;
@@ -914,6 +931,7 @@ const TransferPage = () => {
                         />
                       );
                     })}
+                    </div>
                   </div>
                 )}
 
@@ -933,6 +951,7 @@ const TransferPage = () => {
       {/* Free Agents */}
       {tab === 'freeAgents' && (
         <div className="space-y-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2">
           {freeAgentReveal.visible.map((p, i) => (
             <TransferPlayerCard
               key={p.id}
@@ -957,6 +976,7 @@ const TransferPage = () => {
               }
             />
           ))}
+          </div>
           {freeAgentReveal.hasMore && (
             <div ref={freeAgentReveal.sentinelRef} aria-hidden className="h-8" />
           )}

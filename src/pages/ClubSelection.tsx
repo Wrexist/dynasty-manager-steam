@@ -291,7 +291,7 @@ const ClubSelection = () => {
           className="pointer-events-none absolute inset-x-0 top-0 h-2/3"
           style={LIQUID_SPECULAR_STYLE}
         />
-        <div className="relative max-w-lg mx-auto">
+        <div className="relative mx-auto w-full max-w-[100rem] lg:px-4">
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
@@ -379,7 +379,7 @@ const ClubSelection = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-lg mx-auto px-4 py-4 pb-32">
+      <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 pb-32">
         <AnimatePresence mode="wait">
           {step === 'nationality' ? (
             <motion.div
@@ -401,7 +401,7 @@ const ClubSelection = () => {
                   <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
                     {label}
                   </h3>
-                  <div className="space-y-2">
+                  <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 xl:grid-cols-3 sm:gap-2">
                     {nations.map((nation, i) => {
                       const starPlayers = getNationStarPlayers(nation.name);
                       const isSelected = selectedNationality === nation.name;
@@ -485,16 +485,17 @@ const ClubSelection = () => {
               />
 
               {filteredLeagues ? (
-                <div className="space-y-2">
+                <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 xl:grid-cols-3 sm:gap-2">
                   {filteredLeagues.map((league, i) => (
                     <LeagueCard key={league.id} league={league} index={i} onSelect={handleLeagueSelect} />
                   ))}
                   {filteredLeagues.length === 0 && (
-                    <p className="text-center text-muted-foreground text-sm py-8">No leagues found</p>
+                    <p className="text-center text-muted-foreground text-sm py-8 sm:col-span-full">No leagues found</p>
                   )}
                 </div>
               ) : (
-                regionsToRender.map(region => {
+                <div className="lg:columns-2 xl:columns-3 lg:gap-4 [&>*]:break-inside-avoid [&>*]:mb-4">
+                {regionsToRender.map(region => {
                   const regionLeagues = region.ids.map(id => LEAGUES.find(l => l.id === id)).filter(Boolean);
                   return (
                     <div key={region.label}>
@@ -513,7 +514,8 @@ const ClubSelection = () => {
                       </div>
                     </div>
                   );
-                })
+                })}
+                </div>
               )}
             </motion.div>
           ) : (
@@ -562,9 +564,9 @@ const ClubSelection = () => {
               )}
 
               {/* Club list */}
-              <div className="space-y-2">
+              <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-2">
                 {filteredClubs.length === 0 && clubSearch && (
-                  <p className="text-center text-muted-foreground text-sm py-8">No clubs match "{clubSearch}"</p>
+                  <p className="text-center text-muted-foreground text-sm py-8 sm:col-span-full">No clubs match "{clubSearch}"</p>
                 )}
                 {filteredClubs.map((club, i) => {
                   const isSelected = selected === club.id;
@@ -643,7 +645,7 @@ const ClubSelection = () => {
             className="fixed bottom-0 left-0 right-0 z-30 bg-card/70 backdrop-blur-2xl backdrop-saturate-150 border-t border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_-12px_40px_-8px_rgba(0,0,0,0.6)] safe-area-bottom"
           >
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1/2" style={LIQUID_SPECULAR_STYLE} />
-            <div className="relative max-w-lg mx-auto p-4 space-y-3">
+            <div className="relative mx-auto w-full max-w-3xl p-4 space-y-3">
               {/* Club header */}
               <div className="flex items-center gap-3">
                 <div

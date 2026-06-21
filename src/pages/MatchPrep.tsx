@@ -114,7 +114,7 @@ const MatchPrep = () => {
 
   if (!match || !oppClub) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="mx-auto w-full max-w-2xl px-4 lg:px-8 py-4">
         <GlassPanel className="p-6 text-center">
           <p className="text-sm text-muted-foreground">No upcoming match this week</p>
         </GlassPanel>
@@ -148,10 +148,13 @@ const MatchPrep = () => {
   const lowFitnessInLineup = mySquad.filter(p => lineupIds.has(p.id) && p.fitness < 75 && !p.injured).length;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 pb-bar-safe space-y-3">
+    <div className="mx-auto w-full max-w-[80rem] px-4 lg:px-8 py-4 pb-bar-safe space-y-3">
       <h2 className="text-lg font-display font-bold text-foreground">Match Preparation</h2>
       <PageHint screen="matchPrep" title={PAGE_HINTS.matchPrep.title} body={PAGE_HINTS.matchPrep.body} />
 
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4 lg:items-start space-y-3 lg:space-y-0">
+      {/* Intel column */}
+      <div className="space-y-3">
       {/* Match Header */}
       <GlassPanel className={cn("p-4", competitionInfo.borderAccent)}>
         <div className="text-center mb-2">
@@ -544,7 +547,10 @@ const MatchPrep = () => {
         })()}
       </GlassPanel>
       )}
+      </div>
 
+      {/* Lineup column */}
+      <div className="space-y-3">
       {/* Lineup & Bench */}
       <GlassPanel className="p-4">
         <h3 className="text-sm font-semibold text-foreground mb-2">Your Formation: {myClub.formation}</h3>
@@ -564,6 +570,8 @@ const MatchPrep = () => {
       {!isPro(monetization) && (
         <ProUpsell feature="Instant Match Sim" />
       )}
+      </div>
+      </div>
 
       {/* Ready Button — sticky at bottom. `bottom-20` clears the BottomNav
           footprint on non-notch devices; the inline calc adds the iOS
@@ -573,7 +581,7 @@ const MatchPrep = () => {
         className="fixed left-0 right-0 z-30 px-4 pb-2 pt-2 bg-gradient-to-t from-background via-background to-transparent"
         style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}
       >
-        <div className="max-w-lg mx-auto flex gap-2">
+        <div className="mx-auto w-full max-w-[80rem] lg:px-8 flex gap-2">
           <Button
             size="lg"
             className="flex-1 h-14 text-lg font-bold gap-3"
