@@ -35,6 +35,13 @@ export const signalReady = () => {
   resolveAppReady = null;
 };
 
+// Desktop (Electron / Steam) build: tag the root so index.css can widen the
+// mobile-first layout to use the full window. Done synchronously before render
+// so the first paint already uses the desktop width (no narrow-column flash).
+if (isDesktop()) {
+  document.documentElement.classList.add('desktop');
+}
+
 createRoot(document.getElementById("root")!).render(<App />);
 
 // Mark app as ready after render + first paint (avoids fixed splash delay on native)

@@ -510,3 +510,19 @@ input[type="range"]:not(.age-slider)::-webkit-slider-thumb {
   border-image: linear-gradient(135deg, hsl(215 60% 50%), hsl(var(--gold)), hsl(340 80% 55%)) 1;
   box-shadow: 0 0 12px hsl(215 60% 50% / 0.2);
 }
+
+/* ── Desktop (Electron / Steam) layout ──────────────────────────────────
+   The UI is mobile-first: every page self-wraps in `.max-w-lg` (32rem)
+   centered, leaving large empty margins in a desktop window. On the desktop
+   build (root `.desktop` class, set in main.tsx) widen the content column and
+   the top chrome to use the window. Scoped to <main> (page content + SubNav)
+   and the TopBar <header role="banner"> so portaled modals/sheets (rendered
+   at <body>, outside these) keep their intended narrow width. The BottomNav
+   pill is intentionally left centered/narrow. Per-page multi-column desktop
+   layouts build on top of this foundation. */
+@media (min-width: 1024px) {
+  .desktop main .max-w-lg,
+  .desktop header[role="banner"] .max-w-lg {
+    max-width: min(72rem, 100% - 2.5rem);
+  }
+}
