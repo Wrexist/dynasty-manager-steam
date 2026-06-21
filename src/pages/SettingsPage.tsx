@@ -25,6 +25,7 @@ import {
 } from '@/store/helpers/persistence';
 import { getNotificationPermission, requestNotificationPermission, scheduleEngagementReminders, cancelAllEngagementReminders } from '@/utils/notifications';
 import { restorePurchases, openSubscriptionManagement, getCustomerInfo, extractSubscriptionInfo } from '@/utils/purchases';
+import { isDesktop } from '@/platform/desktop';
 import { triggerTestError } from '@/utils/sentry';
 import { refreshAnalyticsConsent, track } from '@/utils/analytics';
 import { isPro, isSubscriptionActive } from '@/utils/monetization';
@@ -569,7 +570,8 @@ const SettingsBodyInner = ({ variant }: { variant: SettingsVariant }) => {
         </div>
       </SettingsSection>
 
-      {/* ─── Purchases & Subscription ─── */}
+      {/* ─── Purchases & Subscription — hidden on the premium desktop (Steam) build ─── */}
+      {!isDesktop() && (
       <SettingsSection>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Purchases</h3>
@@ -625,6 +627,7 @@ const SettingsBodyInner = ({ variant }: { variant: SettingsVariant }) => {
           Restore previously purchased items from your App Store or Play Store account.
         </p>
       </SettingsSection>
+      )}
 
       {/* ─── Support & Feedback ─── */}
       <SettingsSection title="Support">

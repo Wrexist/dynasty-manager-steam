@@ -14,6 +14,7 @@ import { PINNED_DRAWER_SCREENS, DRAWER_PROGRESSIVE_SCREENS, UNEMPLOYED_ALLOWED_S
 import { NEW_PLAYER_DRAWER_WEEK_THRESHOLD } from '@/config/ui';
 import { getSuffix } from '@/utils/helpers';
 import { useCareerUnemployed } from '@/hooks/useGameSelectors';
+import { isDesktop } from '@/platform/desktop';
 import { CountBadge } from '@/components/game/CountBadge';
 
 // Liquid-glass tile shared by pinned quick-actions and drawer rows. Mirrors
@@ -177,6 +178,9 @@ export function MoreDrawer({ disabled, open: openProp, onOpenChange }: MoreDrawe
     if (!conferenceCup) hidden.add('conference-cup');
     if (!domesticSuperCup && !continentalSuperCup) hidden.add('super-cup');
     if (!internationalTournament && !nationalTeam) hidden.add('national-team');
+    // The Shop (Dynasty Pro & cosmetics) has no purchase surface on the
+    // premium desktop (Steam) build — everything is already unlocked.
+    if (isDesktop()) hidden.add('shop');
     return hidden;
   }, [championsCup, shieldCup, conferenceCup, domesticSuperCup, continentalSuperCup, internationalTournament, nationalTeam]);
 

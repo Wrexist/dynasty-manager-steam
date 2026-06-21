@@ -289,7 +289,10 @@ const PacksPage = () => {
   const activeMethodFor = (tier: PackTierDefinition): PackUnlockMethod | null => {
     if (freeRemaining(tier) > 0) return 'free';
     if (adRemaining(tier) > 0) return 'ad';
-    if (tier.productId) return 'iap';
+    // Desktop (Steam) is a premium one-time build with no IAP surface, so paid
+    // tiers fall back to their in-game currency price instead of the store. On
+    // mobile the IAP path wins here (before currency) and is unaffected.
+    if (!isDesktop() && tier.productId) return 'iap';
     if ((tier.price ?? 0) > 0) return 'currency';
     return null;
   };

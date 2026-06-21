@@ -1,6 +1,7 @@
 import { Crown } from 'lucide-react';
 import { useGameStore } from '@/store/gameStore';
 import { cn } from '@/lib/utils';
+import { isDesktop } from '@/platform/desktop';
 
 interface ProUpsellProps {
   feature: string;
@@ -10,6 +11,9 @@ interface ProUpsellProps {
 /** Compact banner prompting the user to upgrade to Dynasty Pro for a specific feature. */
 export function ProUpsell({ feature, className }: ProUpsellProps) {
   const setScreen = useGameStore(s => s.setScreen);
+
+  // Desktop (Steam) ships every Pro feature unlocked — never prompt to upgrade.
+  if (isDesktop()) return null;
 
   return (
     <button
