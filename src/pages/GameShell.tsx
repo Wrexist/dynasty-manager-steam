@@ -16,6 +16,7 @@ import { BACK_TARGET, MAIN_TABS, WC_MAIN_TABS, SCREEN_GROUPS, UNEMPLOYED_MAIN_TA
 import { MARKET_SUB_NAV, SQUAD_SUB_NAV } from '@/config/ui';
 import { PACK_PITY_THRESHOLD } from '@/config/packs';
 import { useMatchLocked, useCareerUnemployed } from '@/hooks/useGameSelectors';
+import { useDesktopNavShortcuts } from '@/hooks/useDesktopNavShortcuts';
 import { InfoTipProvider } from '@/components/game/InfoTip';
 import { getEntitlements, getCustomerInfo, extractSubscriptionInfo, startEntitlementListener, stopEntitlementListener } from '@/utils/purchases';
 
@@ -151,6 +152,9 @@ const GameShell = () => {
   const matchLocked = useMatchLocked();
   const isUnemployed = useCareerUnemployed();
   const activeTabs = gameMode === 'world-cup' ? WC_MAIN_TABS : isUnemployed ? UNEMPLOYED_MAIN_TABS : MAIN_TABS;
+
+  // Desktop (Steam): number keys 1..N jump to the main nav tabs. No-op on mobile.
+  useDesktopNavShortcuts();
 
   // Derive the sub-nav group for the current screen, if any. Memoized so
   // SubNav doesn't receive a fresh `items` array on every GameShell render
