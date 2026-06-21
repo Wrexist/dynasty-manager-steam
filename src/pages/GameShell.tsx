@@ -5,7 +5,9 @@ import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { TopBar } from '@/components/game/TopBar';
 import { BottomNav } from '@/components/game/BottomNav';
+import { DesktopNav } from '@/components/game/DesktopNav';
 import { SubNav } from '@/components/game/SubNav';
+import { isDesktop } from '@/platform/desktop';
 import { PageErrorBoundary } from '@/components/game/PageErrorBoundary';
 import { ErrorBoundary } from '@/components/game/ErrorBoundary';
 import { ContractNegotiation } from '@/components/game/ContractNegotiation';
@@ -309,11 +311,16 @@ const GameShell = () => {
     window.scrollTo({ top: saved, left: 0, behavior: 'instant' as ScrollBehavior });
   }, [currentScreen]);
 
+  // Desktop (Steam) build swaps the mobile bottom pill + SubNav for a top nav
+  // bar (DesktopNav). Gate on the Electron flag so mobile/web are unchanged.
+  const desktop = isDesktop();
+
   return (
     <ErrorBoundary>
       <InfoTipProvider>
       <div className="min-h-screen bg-background game-theme">
         <TopBar />
+        {desktop && <DesktopNav />}
         <main
           role="main"
           // touch-action: pan-y lets the OS keep horizontal edge gestures
@@ -321,10 +328,12 @@ const GameShell = () => {
           // intentional left/right swipes via useSwipeGesture (which already
           // ignores edge-originating touches).
           className="touch-pan-y"
-          style={{ paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
+          style={desktop
+            ? { paddingTop: '6.5rem', paddingBottom: '2.5rem' }
+            : { paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
           {...swipeHandlers}
         >
-          {subNavGroup && (
+          {!desktop && subNavGroup && (
             <div className="max-w-lg mx-auto">
               <SubNav items={subNavGroup.items} layoutId={subNavGroup.layoutId} />
             </div>
@@ -339,7 +348,7 @@ const GameShell = () => {
             </Suspense>
           </PageErrorBoundary>
         </main>
-        <BottomNav />
+        {!desktop && <BottomNav />}
         <ContractNegotiation />
       </div>
       </InfoTipProvider>
