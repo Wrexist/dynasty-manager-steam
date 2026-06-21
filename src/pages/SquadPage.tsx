@@ -18,6 +18,7 @@ import { getContractUrgency } from '@/utils/contracts';
 import { StatusPill } from '@/components/game/StatusPill';
 import { PlayerStatusBadges } from '@/components/game/PlayerStatusBadges';
 import { compareSquadToLeague } from '@/utils/squadStrength';
+import { isDesktop } from '@/platform/desktop';
 
 const SORT_OPTIONS: SquadSortKey[] = ['overall', 'potential', 'age', 'value', 'fitness', 'morale', 'wage', 'form'];
 // World Cup mode has no club economy — drop the value/wage sorts (national
@@ -84,6 +85,12 @@ const SquadPage = () => {
   const [contractAlertsOpen, setContractAlertsOpen] = useState(false);
 
   const club = clubs[playerClubId];
+
+  // On the Steam/Electron desktop build the squad grid has room to breathe —
+  // render the larger shield so cards feel substantial on a 1440px+ window.
+  // Mobile/web keep the canonical `lg` card. (Width is fixed-px per size, so
+  // the grid columns below are tuned to match the chosen card width.)
+  const cardSize = isDesktop() ? '2xl' : 'lg';
 
   const fullSquad = useMemo(() => (club?.playerIds || []).map(id => players[id]).filter(Boolean), [club?.playerIds, players]);
 
@@ -461,7 +468,7 @@ const SquadPage = () => {
             )}
           </GlassPanel>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4 justify-items-center pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-5 xl:gap-6 justify-items-center pt-1">
             {squad.map((player, i) => {
               const isStarter = lineupSet.has(player.id);
               const isSub = subsSet.has(player.id);
@@ -476,7 +483,7 @@ const SquadPage = () => {
                 >
                   <PlayerCard
                     player={player}
-                    size="lg"
+                    size={cardSize}
                     interactive="detail"
                     showConditionView={false}
                     onDetailClick={(p) => selectPlayer(p.id)}

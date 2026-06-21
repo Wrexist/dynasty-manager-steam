@@ -383,9 +383,15 @@ const TransferPage = () => {
         ))}
       </div>
 
-      {/* Compact Filter Toolbar (market & free agents tabs) */}
+      {/* Market / Free-Agent split-pane: on desktop the filters become a sticky
+          sidebar and the listing grid fills the rest (split-pane feel). On the
+          market tab the stats summary + listings live in the right column; on
+          mobile everything stacks single-column. */}
       {(tab === 'market' || tab === 'freeAgents') && (
-        <div className="space-y-2">
+        <div className={cn(tab === 'market' && 'lg:grid lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-4 lg:items-start')}>
+
+      {/* Compact Filter Toolbar (market & free agents tabs) */}
+        <div className="space-y-2 lg:sticky lg:top-4">
           {/* Search + Shortlist toggle (single row) */}
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -499,10 +505,14 @@ const TransferPage = () => {
             </div>
           )}
         </div>
-      )}
+        {/* end filter sidebar */}
 
-      {/* Market Stats Summary */}
+      {/* Right column: market stats + listings (market tab only). On the
+          free-agents tab the sidebar above is full-width and free-agent
+          listings render in their own section below. */}
       {tab === 'market' && (
+        <div className="space-y-2 mt-2 lg:mt-0 min-w-0">
+      {/* Market Stats Summary */}
         <GlassPanel className="p-2.5 flex items-center gap-3 text-[10px] text-muted-foreground">
           <TrendingUp className="w-3.5 h-3.5 text-primary shrink-0" />
           <span>{listings.filter(l => !l.externalPlayer).length} from clubs</span>
@@ -513,10 +523,8 @@ const TransferPage = () => {
           <span className="text-border">|</span>
           <span>{listings.length} match{listings.length !== 1 ? 'es' : ''}</span>
         </GlassPanel>
-      )}
 
       {/* Market Listings */}
-      {tab === 'market' && (
         <div className="space-y-2">
           {listings.length === 0 && (() => {
             const hasFilters = posFilter !== 0 || searchQuery.trim() || divFilter !== 'all' || hideUnaffordable || showShortlistOnly;
@@ -613,7 +621,13 @@ const TransferPage = () => {
             <div ref={marketReveal.sentinelRef} aria-hidden className="h-8" />
           )}
         </div>
+        </div>
       )}
+      {/* end market right column */}
+
+        </div>
+      )}
+      {/* end market / free-agent split-pane */}
 
       {/* Deals Tab (Incoming + Outgoing + Loans combined) */}
       {tab === 'deals' && (

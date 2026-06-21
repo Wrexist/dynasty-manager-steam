@@ -40,7 +40,7 @@ function CommunityPackPopupInner({ open, onChoice, onClose }: CommunityPackPopup
     <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
       <DialogContent
         className={cn(
-          'max-w-sm mx-auto overflow-hidden border-0 p-0',
+          'max-w-sm md:max-w-md lg:max-w-lg mx-auto overflow-hidden border-0 p-0',
           'bg-gradient-to-br from-[hsl(222_35%_14%/0.85)] via-[hsl(222_30%_9%/0.85)] to-[hsl(222_40%_7%/0.9)]',
           'backdrop-blur-2xl backdrop-saturate-150 rounded-3xl',
           // Hairline outer stroke + bright top inset + dark bottom inset
@@ -166,7 +166,7 @@ function CommunityPackPopupInner({ open, onChoice, onClose }: CommunityPackPopup
                 'border border-primary/40',
                 'shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(0,0,0,0.35),0_10px_24px_-8px_hsl(43_96%_46%/0.55)]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
-                'overflow-hidden',
+                'cursor-pointer overflow-hidden',
               )}
             >
               <span className="flex items-center justify-center gap-2">
@@ -184,7 +184,7 @@ function CommunityPackPopupInner({ open, onChoice, onClose }: CommunityPackPopup
                 'bg-white/[0.08] text-foreground/90',
                 'border border-white/20 backdrop-blur-xl backdrop-saturate-150',
                 'shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(0,0,0,0.3),0_8px_20px_-10px_rgba(0,0,0,0.5)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 cursor-pointer',
               )}
             >
               Use Generated Players

@@ -111,7 +111,7 @@ export function AchievementUnlockModal({ open, onClose, achievement }: Achieveme
             role="dialog"
             aria-modal="true"
             aria-label={`Achievement unlocked: ${achievement.title}`}
-            className="relative bg-card/95 backdrop-blur-xl border-2 border-primary/50 rounded-2xl max-w-sm w-full p-6 overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.2)]"
+            className="relative bg-card/95 backdrop-blur-xl border-2 border-primary/50 rounded-2xl max-w-sm md:max-w-md w-full p-6 overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.2)]"
             initial={{ scale: 0.7, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 10 }}
@@ -129,7 +129,7 @@ export function AchievementUnlockModal({ open, onClose, achievement }: Achieveme
               type="button"
               onClick={onClose}
               aria-label="Close achievement"
-              className="absolute top-0 right-0 z-10 flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              className="absolute top-0 right-0 z-10 flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
               <X className="w-5 h-5" />
             </button>

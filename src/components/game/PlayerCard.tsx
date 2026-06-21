@@ -24,7 +24,7 @@ function getTopThreeStats(attrs: PlayerAttributes): Array<{ label: string; value
     .slice(0, 3);
 }
 
-export type PlayerCardSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type PlayerCardSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 export type PlayerCardInteraction = 'cycle' | 'detail' | 'none';
 export type PositionTone = 'natural' | 'compatible' | 'wrong';
 
@@ -40,6 +40,8 @@ interface PlayerCardProps {
    *  - `lg` (150) — squad grid, youth academy, transfer market,
    *                 player detail hero, pack reveal (the main app card)
    *  - `xl` (220) — pack walkout hero only
+   *  - `2xl` (280) — desktop squad / youth grid card (Steam build)
+   *  - `3xl` (340) — desktop hero / large-window walkout
    */
   size?: PlayerCardSize;
   /**
@@ -87,7 +89,7 @@ const POSITION_TONE_COLORS: Record<PositionTone, string> = {
  * bars under youth prospects, pack container sizing, etc.) can align to
  * the same number without hardcoding `w-[150px]` in parallel.
  */
-export const PLAYER_CARD_SIZE_PX: Record<PlayerCardSize, number> = { xs: 52, sm: 64, md: 110, lg: 150, xl: 220 };
+export const PLAYER_CARD_SIZE_PX: Record<PlayerCardSize, number> = { xs: 52, sm: 64, md: 110, lg: 150, xl: 220, '2xl': 280, '3xl': 340 };
 const SIZE_PX = PLAYER_CARD_SIZE_PX;
 
 /**

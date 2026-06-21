@@ -17,6 +17,7 @@ import { AdRewardButton } from '@/components/game/AdRewardButton';
 import { successToast, infoToast, errorToast } from '@/utils/gameToast';
 import { PageHint } from '@/components/game/PageHint';
 import type { YouthFocus } from '@/types/game';
+import { isDesktop } from '@/platform/desktop';
 
 const FOCUS_OPTIONS: { id: YouthFocus; label: string; short: string; Icon: typeof Star; tone: string }[] = [
   { id: 'balanced', label: 'Balanced', short: 'BAL', Icon: Star, tone: 'text-muted-foreground' },
@@ -53,6 +54,12 @@ const YouthAcademy = () => {
   const youthPreviewEnhanced = youthAcademy.youthPreviewEnhanced;
   const club = clubs[playerClubId];
   const spotlightUsesRemaining = youthAcademy.spotlightUsesRemaining ?? 2;
+
+  // Larger prospect shield on the Steam/Electron desktop build. The dev bar,
+  // focus row and action row below are width-locked to the card width, so they
+  // all reference PLAYER_CARD_SIZE_PX[cardSize] to stay flush with the shield.
+  const cardSize = isDesktop() ? '2xl' : 'lg';
+  const cardWidth = PLAYER_CARD_SIZE_PX[cardSize];
 
   const youthCoachQuality = useMemo(() => getStaffBonus(staff.members, 'youth-coach'), [staff.members]);
   const youthLevel = facilities.youthLevel;
@@ -184,7 +191,7 @@ const YouthAcademy = () => {
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 justify-items-center pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-5 xl:gap-6 justify-items-center pt-1">
               {youthAcademy.prospects.map((prospect, i) => {
                 const player = players[prospect.playerId];
                 if (!player) return null;
@@ -206,7 +213,7 @@ const YouthAcademy = () => {
                     <div className="relative">
                       <PlayerCard
                         player={player}
-                        size="lg"
+                        size={cardSize}
                         interactive="detail"
                         showConditionView={false}
                         onDetailClick={(p) => selectPlayer(p.id)}
@@ -233,8 +240,8 @@ const YouthAcademy = () => {
                       </div>
                     </div>
 
-                    {/* Development bar — matches PlayerCard lg width */}
-                    <div className="mt-1.5" style={{ width: PLAYER_CARD_SIZE_PX.lg }}>
+                    {/* Development bar — matches PlayerCard width */}
+                    <div className="mt-1.5" style={{ width: cardWidth }}>
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Dev</span>
                         <span className={cn('text-[9px] font-semibold tabular-nums', getRatingColor(prospect.developmentScore))}>
@@ -250,7 +257,7 @@ const YouthAcademy = () => {
                     </div>
 
                     {/* Focus + Spotlight row */}
-                    <div className="mt-1.5 flex items-center gap-1" style={{ width: PLAYER_CARD_SIZE_PX.lg }}>
+                    <div className="mt-1.5 flex items-center gap-1" style={{ width: cardWidth }}>
                       {!isFocusEditing ? (
                         <button
                           type="button"
@@ -301,7 +308,7 @@ const YouthAcademy = () => {
                     </div>
 
                     {/* Action row */}
-                    <div className="mt-1.5 flex gap-1" style={{ width: PLAYER_CARD_SIZE_PX.lg }}>
+                    <div className="mt-1.5 flex gap-1" style={{ width: cardWidth }}>
                       {isConfirming ? (
                         <>
                           <button

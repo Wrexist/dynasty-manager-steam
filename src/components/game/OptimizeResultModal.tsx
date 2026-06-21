@@ -114,7 +114,7 @@ export function OptimizeResultModal({ result, onDismiss }: OptimizeResultModalPr
 
           <motion.div
             className={cn(
-              'relative w-full max-w-sm transform-gpu overflow-hidden rounded-3xl text-center',
+              'relative w-full max-w-sm md:max-w-md lg:max-w-lg transform-gpu overflow-hidden rounded-3xl text-center',
               'bg-gradient-to-br from-[hsl(222_35%_14%/0.78)] via-[hsl(222_28%_10%/0.82)] to-[hsl(222_40%_7%/0.88)]',
               'backdrop-blur-2xl backdrop-saturate-150',
               'shadow-[0_0_0_1px_rgba(255,255,255,0.08)_inset,inset_0_1px_0_rgba(255,255,255,0.20),inset_0_-1px_0_rgba(0,0,0,0.40),0_30px_80px_-30px_rgba(0,0,0,0.7),0_0_60px_-20px_hsl(var(--primary)/0.35)]',
@@ -226,7 +226,8 @@ export function OptimizeResultModal({ result, onDismiss }: OptimizeResultModalPr
                 onClick={() => { hapticLight(); onDismiss(); }}
                 className={cn(
                   'relative overflow-hidden w-full py-2.5 rounded-2xl font-semibold text-sm',
-                  'flex items-center justify-center gap-2 transition-all active:scale-[0.985]',
+                  'flex items-center justify-center gap-2 transition-all active:scale-[0.985] cursor-pointer',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
                   'backdrop-blur-xl backdrop-saturate-150',
                   'bg-gradient-to-b from-primary to-[hsl(var(--primary)/0.85)] text-primary-foreground',
                   'shadow-[0_0_0_1px_rgba(255,255,255,0.12)_inset,inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_0_rgba(0,0,0,0.25),0_10px_28px_-10px_hsl(var(--primary)/0.55)]',

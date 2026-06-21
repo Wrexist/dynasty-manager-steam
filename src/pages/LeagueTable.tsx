@@ -93,6 +93,15 @@ const LeagueTable = () => {
     return currentFixtures.filter(m => m.week === browseWeek);
   }, [divisionFixtures, selectedDiv, browseWeek]);
 
+  // Most recent played fixtures in this division (for the desktop side panel).
+  const recentResults = useMemo(() => {
+    const fixtures = divisionFixtures[selectedDiv] || [];
+    return fixtures
+      .filter(m => m.played)
+      .sort((a, b) => b.week - a.week)
+      .slice(0, 6);
+  }, [divisionFixtures, selectedDiv]);
+
   // Stats leaders for selected division
   const { topScorers, topAssisters } = useMemo(() => {
     const divClubIds = new Set(divisionClubs[selectedDiv] || []);
@@ -410,7 +419,7 @@ const LeagueTable = () => {
 
       {/* Table Tab */}
       {tab === 'table' && (
-        <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-6 xl:items-start">
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-6 lg:items-start">
         <div>
         <div className="relative mb-2">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -438,7 +447,7 @@ const LeagueTable = () => {
           <div className="overflow-x-auto">
             {/* table-fixed so the Club column truncates cleanly instead of
                 the auto-layout squeezing every column at 375px width. */}
-            <table className="w-full text-sm table-fixed">
+            <table className="w-full text-sm table-fixed lg:[&_td]:py-3 lg:[&_th]:py-3">
               <thead>
                 <tr className="border-b border-border/30">
                   <th className="text-left px-1 py-2 text-[10px] text-muted-foreground uppercase w-6">#</th>
@@ -570,7 +579,7 @@ const LeagueTable = () => {
 
         {/* Stats side panel — desktop only; mirrors the Stats Leaders tab so the
             wide canvas isn't wasted while reading the table. */}
-        <aside className="hidden xl:block space-y-4">
+        <aside className="hidden lg:block space-y-4">
           <GlassPanel className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Top Scorers</p>
             {topScorers.length > 0 ? (
@@ -636,6 +645,40 @@ const LeagueTable = () => {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">No assists recorded yet</p>
+            )}
+          </GlassPanel>
+
+          {/* Recent fixtures — most recent played matches in this league, so the
+              desktop side panel surfaces match context next to the table. */}
+          <GlassPanel className="p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Recent Results</p>
+            {recentResults.length > 0 ? (
+              <div className="space-y-1.5">
+                {recentResults.map(match => {
+                  const homeClub = clubs[match.homeClubId];
+                  const awayClub = clubs[match.awayClubId];
+                  const isPlayerMatch = match.homeClubId === playerClubId || match.awayClubId === playerClubId;
+                  return (
+                    <div
+                      key={match.id}
+                      className={cn(
+                        'flex items-center gap-2 text-xs rounded-lg px-2 py-1.5 transition-colors',
+                        isPlayerMatch ? 'bg-primary/5' : 'hover:bg-muted/20'
+                      )}
+                    >
+                      <span className={cn('flex-1 text-right truncate', match.homeClubId === playerClubId ? 'text-primary font-bold' : 'text-foreground')}>
+                        {getClubDisplayName(homeClub?.name || '?')}
+                      </span>
+                      <span className="font-mono font-bold text-foreground shrink-0 tabular-nums">{match.homeGoals}-{match.awayGoals}</span>
+                      <span className={cn('flex-1 truncate', match.awayClubId === playerClubId ? 'text-primary font-bold' : 'text-foreground')}>
+                        {getClubDisplayName(awayClub?.name || '?')}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No results yet</p>
             )}
           </GlassPanel>
         </aside>

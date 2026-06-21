@@ -152,7 +152,7 @@ const MatchPrep = () => {
       <h2 className="text-lg font-display font-bold text-foreground">Match Preparation</h2>
       <PageHint screen="matchPrep" title={PAGE_HINTS.matchPrep.title} body={PAGE_HINTS.matchPrep.body} />
 
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4 lg:items-start space-y-3 lg:space-y-0">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-4 lg:items-start space-y-3 lg:space-y-0">
       {/* Intel column */}
       <div className="space-y-3">
       {/* Match Header */}
@@ -549,10 +549,11 @@ const MatchPrep = () => {
       )}
       </div>
 
-      {/* Lineup column */}
-      <div className="space-y-3">
+      {/* Lineup column — pitch dominates on desktop, stays in view while
+          scanning the intel column */}
+      <div className="space-y-3 lg:sticky lg:top-4">
       {/* Lineup & Bench */}
-      <GlassPanel className="p-4">
+      <GlassPanel className="p-4 lg:p-6">
         <h3 className="text-sm font-semibold text-foreground mb-2">Your Formation: {myClub.formation}</h3>
 
         <div className="mb-3">

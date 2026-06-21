@@ -149,7 +149,7 @@ const TacticsPage = () => {
     <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-4">
       <h2 className="text-lg font-bold text-foreground font-display">Tactics</h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-4 lg:items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)] gap-4 lg:gap-6 lg:items-start">
       {/* LEFT COLUMN — pitch & lineup get the visual weight on desktop */}
       <div className="space-y-4 lg:sticky lg:top-4">
       {/* Team Rating Summary — slim Liquid Glass row */}
@@ -229,8 +229,8 @@ const TacticsPage = () => {
         </GlassPanel>
       )}
 
-      {/* Lineup Editor with Drag & Drop */}
-      <GlassPanel className="p-4">
+      {/* Lineup Editor with Drag & Drop — the pitch is the hero on desktop */}
+      <GlassPanel className="p-4 lg:p-6">
         <LineupEditor />
       </GlassPanel>
 

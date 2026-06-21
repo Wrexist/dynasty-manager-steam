@@ -90,7 +90,7 @@ export function ListForSaleModal({ player, onClose, onListed }: Props) {
 
         {/* Modal */}
         <motion.div
-          className="relative w-full max-w-sm max-h-[85vh] overflow-y-auto bg-card/95 backdrop-blur-xl border border-border/50 rounded-b-2xl sm:rounded-2xl sm:mx-4"
+          className="relative w-full max-w-sm md:max-w-md lg:max-w-lg max-h-[85vh] overflow-y-auto bg-card/95 backdrop-blur-xl border border-border/50 rounded-b-2xl sm:rounded-2xl sm:mx-4"
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -60, opacity: 0 }}
@@ -229,7 +229,7 @@ export function ListForSaleModal({ player, onClose, onListed }: Props) {
             <button
               type="button"
               onClick={handleList}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-black bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(16,185,129,0.25)]"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-black bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(16,185,129,0.25)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
             >
               List for {formatMoney(askingPrice)} <ArrowRight className="w-4 h-4" />
             </button>

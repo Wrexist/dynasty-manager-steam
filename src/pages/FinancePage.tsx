@@ -110,7 +110,8 @@ const FinancePage = () => {
       {chartData.length > 0 ? (
         <GlassPanel className="p-4">
           <h3 className="text-sm font-semibold text-foreground mb-3">Budget History</h3>
-          <ResponsiveContainer width="100%" height={160}>
+          <div className="h-40 lg:h-72 xl:h-80">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
               <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} width={35} tickFormatter={(v) => `${v}M`} />
@@ -122,6 +123,7 @@ const FinancePage = () => {
               <Line type="monotone" dataKey="balance" stroke="hsl(160, 84%, 39%)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </GlassPanel>
       ) : (
         <GlassPanel className="p-4">

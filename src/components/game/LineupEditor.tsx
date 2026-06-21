@@ -308,8 +308,25 @@ export function LineupEditor() {
 
   return (
     <div>
-      {/* Half Pitch (bottom half only) */}
-      <div className="relative w-full mx-auto" style={{ aspectRatio: `${VP_W}/${VP_H}`, maxWidth: 'min(28rem, 100%)' }}>
+      {/* Half Pitch (bottom half only).
+          The pitch is the hero of the desktop tactics board: it scales from a
+          mobile-sized 28rem cap up to a large 48rem (lg) / 56rem (xl) board.
+          `--tile-scale` grows the fixed-px PlayerCard tiles + empty slots in
+          step with the pitch so positions stay legible at desktop sizes —
+          the percentage-based slot positioning math is untouched, so the
+          layout is identical, just larger. */}
+      <div
+        className={cn(
+          'lineup-pitch relative w-full mx-auto',
+          // Responsive max-width — mobile keeps the 28rem cap; desktop lets the
+          // board dominate (48rem at lg, 56rem at xl).
+          'max-w-[min(28rem,100%)] lg:max-w-[min(48rem,100%)] xl:max-w-[min(56rem,100%)]',
+          // Tile scale grows in step with the board so fixed-px PlayerCard
+          // tiles + empty slots read as a real tactics board, not stamps.
+          '[--tile-scale:1] lg:[--tile-scale:1.55] xl:[--tile-scale:1.85]',
+        )}
+        style={{ aspectRatio: `${VP_W}/${VP_H}` }}
+      >
         <svg viewBox={`0 ${VP_Y} ${VP_W} ${VP_H}`} className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
           {/* Pitch background & markings */}
           <rect x="0" y="0" width="68" height="105" rx="1.5" fill={PITCH_COLORS.FILL} />
@@ -401,7 +418,10 @@ export function LineupEditor() {
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
-                transform: 'translate(-50%, -50%)',
+                // scale() expands the fixed-px tile around its own centre while
+                // translate(-50%) keeps that centre pinned to the slot anchor,
+                // so the percentage-based positioning math stays exact.
+                transform: 'translate(-50%, -50%) scale(var(--tile-scale, 1))',
                 zIndex: isSelected ? 40 : 10 + i,
               }}
             >

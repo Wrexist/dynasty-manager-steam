@@ -97,7 +97,8 @@ const ComparisonPage = () => {
                 <div className="w-3 h-3 rounded-full bg-emerald-400" />
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={320}>
+            <div className="h-80 lg:h-96 xl:h-[28rem]">
+            <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
                 <PolarGrid stroke="hsl(var(--border))" />
                 <PolarAngleAxis dataKey="attr" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
@@ -105,6 +106,7 @@ const ComparisonPage = () => {
                 <Radar name={playerB.lastName} dataKey="b" stroke={CHART_COLORS.COMPARISON} fill={CHART_COLORS.COMPARISON} fillOpacity={CHART_COLORS.FILL_OPACITY_SECONDARY} strokeWidth={CHART_COLORS.STROKE_WIDTH} />
               </RadarChart>
             </ResponsiveContainer>
+            </div>
           </GlassPanel>
 
           {/* Stat Comparison Table */}

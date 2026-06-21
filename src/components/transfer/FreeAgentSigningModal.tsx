@@ -41,7 +41,7 @@ export function FreeAgentSigningModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <GlassPanel className="p-5 max-w-sm w-full space-y-4">
+      <GlassPanel className="p-5 max-w-sm md:max-w-md lg:max-w-lg w-full space-y-4">
         <h3 className="text-base font-bold text-foreground font-display">Sign {p.firstName} {p.lastName}</h3>
         <p className="text-xs text-muted-foreground">{p.position} {'•'} {p.age}y {'•'} OVR {p.overall}</p>
         <div>
@@ -67,8 +67,8 @@ export function FreeAgentSigningModal({
                 key={y}
                 onClick={() => onSetOfferYears(y)}
                 className={cn(
-                  'flex-1 py-1.5 rounded-lg text-xs font-medium transition-all',
-                  offerYears === y ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'
+                  'flex-1 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+                  offerYears === y ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted/70'
                 )}
               >
                 {y} year{y > 1 ? 's' : ''}

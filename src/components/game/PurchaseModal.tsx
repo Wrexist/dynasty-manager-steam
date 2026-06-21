@@ -64,7 +64,7 @@ export function PurchaseModal({ productId, onConfirm, onCancel, loading, storePr
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-6 max-w-sm w-full space-y-4"
+          className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-6 max-w-sm md:max-w-md w-full space-y-4"
           onClick={e => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
@@ -82,7 +82,7 @@ export function PurchaseModal({ productId, onConfirm, onCancel, loading, storePr
               onClick={handleCancel}
               disabled={loading}
               aria-label={isSubscription ? 'Close subscription dialog' : 'Close purchase dialog'}
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] -m-2.5 text-muted-foreground hover:text-foreground disabled:opacity-50"
+              className="flex items-center justify-center min-w-[44px] min-h-[44px] -m-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <X className="w-5 h-5" />
             </button>
@@ -102,7 +102,7 @@ export function PurchaseModal({ productId, onConfirm, onCancel, loading, storePr
             <button
               onClick={handleConfirm}
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 active:scale-[0.98] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Processing...' : isSubscription ? 'Subscribe' : 'Purchase'}
             </button>
@@ -110,7 +110,7 @@ export function PurchaseModal({ productId, onConfirm, onCancel, loading, storePr
             <button
               onClick={handleCancel}
               disabled={loading}
-              className="w-full py-2 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+              className="w-full py-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>

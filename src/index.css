@@ -526,3 +526,32 @@ input[type="range"]:not(.age-slider)::-webkit-slider-thumb {
     max-width: min(72rem, 100% - 2.5rem);
   }
 }
+
+/* ── Desktop (Electron / Steam) themed scrollbars ───────────────────────
+   The default Chromium scrollbar reads as a generic web app and clashes with
+   the dark premium UI. Theme it on the desktop build only (scoped to .desktop)
+   so mobile/web are untouched. */
+.desktop {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border) / 0.9) transparent;
+}
+.desktop ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.desktop ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.desktop ::-webkit-scrollbar-thumb {
+  background: hsl(var(--border) / 0.85);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.desktop ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.55);
+  background-clip: padding-box;
+}
+.desktop ::-webkit-scrollbar-corner {
+  background: transparent;
+}
