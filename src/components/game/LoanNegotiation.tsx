@@ -454,28 +454,25 @@ export function LoanNegotiation({ playerId, onClose }: Props) {
                   Loan Agreed!
                 </motion.p>
 
-                {/* Loan signing card */}
+                {/* Loan signing card — the FUT-style card is the hero,
+                    rendered large and centered with the full 6-stat layout. */}
                 <motion.div
-                  className="w-full bg-blue-500/5 border border-blue-500/30 rounded-xl p-4"
+                  className="w-full flex flex-col items-center gap-3 bg-blue-500/5 border border-blue-500/30 rounded-xl p-4"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.15 }}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="shrink-0">
-                      <PlayerCard player={player} size="md" interactive="none" compact />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-foreground font-display text-base">
-                        {player.firstName} {player.lastName}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {player.position} · {player.age}y · <FlagIcon nationality={player.nationality} size={14} /> {player.nationality}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Welcome on loan to <span className="text-foreground font-medium">{userClub.name}</span>
-                      </p>
-                    </div>
+                  <PlayerCard player={player} size="xl" interactive="none" />
+                  <div className="text-center min-w-0 w-full">
+                    <p className="font-bold text-foreground font-display text-lg leading-tight truncate">
+                      {player.firstName} {player.lastName}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
+                      {player.position} · {player.age}y · <FlagIcon nationality={player.nationality} size={14} />
+                    </p>
+                    <p className="text-xs text-blue-400/90 font-medium mt-1 truncate">
+                      Welcome on loan to {userClub.name}
+                    </p>
                   </div>
                 </motion.div>
 

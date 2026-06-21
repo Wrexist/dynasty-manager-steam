@@ -42,7 +42,7 @@ const CareerOverview = () => {
   };
 
   return (
-    <div className="space-y-4 pb-24">
+    <div className="mx-auto w-full max-w-[100rem] lg:px-4 pb-24 space-y-4 lg:columns-2 xl:columns-3 lg:gap-5 lg:space-y-0 [&>*]:mb-4 [&>*]:break-inside-avoid">
       <PageHint
         screen="career-overview"
         title="Career Mode"
@@ -50,7 +50,7 @@ const CareerOverview = () => {
       />
 
       {/* Manager Header */}
-      <GlassPanel className="p-4">
+      <GlassPanel className="p-4 lg:[column-span:all]">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
             <ManagerAvatar appearance={careerManager.appearance} size={48} initials={careerManager.name.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2)} />

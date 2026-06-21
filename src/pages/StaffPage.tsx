@@ -218,9 +218,9 @@ const StaffPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8">
       <PageHint screen="staff" title={PAGE_HINTS.staff.title} body={PAGE_HINTS.staff.body} />
-      <div className="px-4 pb-4 space-y-3">
+      <div className="pb-4 space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-display font-bold text-foreground">Staff</h2>
@@ -268,7 +268,8 @@ const StaffPage = () => {
           </div>
         </GlassPanel>
 
-        {/* Role Slots */}
+        {/* Role Slots — card grid on desktop; each role card is self-contained */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 items-start">
         {ALL_ROLES.map(role => {
           const current = membersByRole[role];
           const upgrade = staff.availableHires.find(h => h.role === role);
@@ -621,6 +622,7 @@ const StaffPage = () => {
             </GlassPanel>
           );
         })}
+        </div>
       </div>
     </div>
   );

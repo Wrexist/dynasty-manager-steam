@@ -118,7 +118,7 @@ const FacilitiesPage = () => {
   })();
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <div className="mx-auto w-full max-w-[80rem] px-4 lg:px-8 py-4 space-y-3">
       <PageHint
         screen="facilities"
         title="Facility Upgrades"
@@ -169,6 +169,8 @@ const FacilitiesPage = () => {
               </p>
             </div>
 
+            {/* Desktop: stadium SVG on the left, stats + stand panel on the right */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:items-start">
             {/* Stadium SVG */}
             <GlassPanel className="p-3">
               <StadiumView
@@ -183,6 +185,8 @@ const FacilitiesPage = () => {
               />
             </GlassPanel>
 
+            {/* Right column: stats, selected stand, hint */}
+            <div className="space-y-3">
             {/* Stadium Stats */}
             <div className="grid grid-cols-3 gap-2">
               <GlassPanel className="p-3 text-center">
@@ -234,6 +238,8 @@ const FacilitiesPage = () => {
                 <p className="text-[10px] text-muted-foreground text-center">Tap a stand to view details and upgrade</p>
               )
             )}
+            </div>
+            </div>
           </motion.div>
         ) : (
           <motion.div
@@ -242,7 +248,7 @@ const FacilitiesPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="space-y-3"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start"
           >
             {FACILITY_INFO.map(({ type, label, icon, color, key, benefit }) => {
               const level = facilities[key] as number;

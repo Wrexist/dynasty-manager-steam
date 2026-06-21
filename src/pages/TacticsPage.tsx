@@ -146,9 +146,12 @@ const TacticsPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-4">
       <h2 className="text-lg font-bold text-foreground font-display">Tactics</h2>
 
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)] gap-4 lg:gap-6 lg:items-start">
+      {/* LEFT COLUMN — pitch & lineup get the visual weight on desktop */}
+      <div className="space-y-4 lg:sticky lg:top-4">
       {/* Team Rating Summary — slim Liquid Glass row */}
       {teamRating && (
         <GlassPanel className="px-3 py-2.5">
@@ -226,8 +229,8 @@ const TacticsPage = () => {
         </GlassPanel>
       )}
 
-      {/* Lineup Editor with Drag & Drop */}
-      <GlassPanel className="p-4">
+      {/* Lineup Editor with Drag & Drop — the pitch is the hero on desktop */}
+      <GlassPanel className="p-4 lg:p-6">
         <LineupEditor />
       </GlassPanel>
 
@@ -237,7 +240,11 @@ const TacticsPage = () => {
       ) : (
         <ProUpsell feature="Optimize Lineup" />
       )}
+      </div>
+      {/* end LEFT COLUMN */}
 
+      {/* RIGHT COLUMN — analysis, formation & instruction panels */}
+      <div className="space-y-4 min-w-0">
       {/* Chemistry Summary */}
       {chemistry && chemistry.links.length > 0 && (() => {
         const label = getChemistryLabel(chemistry.bonus);
@@ -412,13 +419,13 @@ const TacticsPage = () => {
             </span>
           </div>
         </div>
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible">
           {getAvailableFormations(hasFormationMasterPerk).map(f => (
             <button
               key={f}
               onClick={() => { if (club.formation !== f) { setFormation(f); infoToast(`Formation set to ${f}`); } }}
               className={cn(
-                'px-3 py-1.5 rounded-full text-sm font-mono font-bold transition-all shrink-0',
+                'px-3 py-1.5 rounded-full text-sm font-mono font-bold transition-all shrink-0 cursor-pointer',
                 club.formation === f
                   ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted'
@@ -441,7 +448,7 @@ const TacticsPage = () => {
         <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
           Defensive Shape <span className="text-[10px] normal-case">(out of possession)</span>
         </p>
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide lg:flex-wrap lg:overflow-visible">
           <button
             onClick={() => { setDefensiveFormation(null); hapticLight(); infoToast('Defensive shape mirrors formation'); }}
             className={cn(
@@ -458,7 +465,7 @@ const TacticsPage = () => {
               key={f}
               onClick={() => { setDefensiveFormation(f); hapticLight(); infoToast(`Defensive shape set to ${f}`); }}
               className={cn(
-                'px-3 py-1.5 rounded-full text-sm font-mono font-bold transition-all shrink-0',
+                'px-3 py-1.5 rounded-full text-sm font-mono font-bold transition-all shrink-0 cursor-pointer',
                 club.defensiveFormation === f
                   ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted'
@@ -480,7 +487,7 @@ const TacticsPage = () => {
       {/* Style Presets */}
       <GlassPanel className="p-4">
         <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Style Presets</p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-2">
           {STYLE_PRESETS.map(preset => {
             const active = isPresetActive(preset);
             return (
@@ -488,7 +495,7 @@ const TacticsPage = () => {
                 key={preset.label}
                 onClick={() => setTactics(preset.values)}
                 className={cn(
-                  'px-3 py-2.5 rounded-lg text-left transition-all',
+                  'px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer',
                   active
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted/50 text-muted-foreground hover:bg-muted'
@@ -697,6 +704,10 @@ const TacticsPage = () => {
           </div>
         </div>
       </GlassPanel>
+      </div>
+      {/* end RIGHT COLUMN */}
+      </div>
+      {/* end tactics grid */}
 
       <OptimizeResultModal result={optimizeResult} onDismiss={dismissOptimizeResult} />
     </div>

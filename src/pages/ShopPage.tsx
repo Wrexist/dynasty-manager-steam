@@ -185,7 +185,7 @@ const ShopPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-5">
+    <div className="mx-auto w-full max-w-[80rem] px-4 lg:px-8 py-4 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -357,7 +357,7 @@ const ShopPage = () => {
 
           {/* Subscription Tier Cards */}
           {!userIsPro && (
-            <div className="space-y-3">
+            <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-3 lg:items-stretch">
               {SUBSCRIPTION_PRODUCTS.map(productId => {
                 const product = PRODUCTS[productId];
                 const isLifetime = product.subscriptionTier === 'lifetime';
@@ -416,11 +416,11 @@ const ShopPage = () => {
               })}
 
               {/* One-time Pro alternative */}
-              <div className="relative">
+              <div className="relative lg:col-span-3">
                 <div className="absolute inset-x-0 top-0 h-px bg-border/30" />
                 <p className="text-[10px] text-muted-foreground text-center py-2">or buy once</p>
               </div>
-              <GlassPanel className="p-4">
+              <GlassPanel className="p-4 lg:col-span-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-semibold text-foreground">{PRODUCTS['com.dynastymanager.pro'].name}</h4>
@@ -452,7 +452,7 @@ const ShopPage = () => {
             </span>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
           {PRO_FEATURES.map(feature => {
             const Icon = FEATURE_ICONS[feature];
             return (
@@ -486,7 +486,7 @@ const ShopPage = () => {
           <Package className="w-4 h-4 text-[hsl(var(--gold))]" />
           <p className="text-xs font-bold text-foreground uppercase tracking-wider">Customization Packs</p>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-3 lg:items-start">
           {COSMETIC_PACK_IDS.map(productId => {
             const product = PRODUCTS[productId];
             const owned = hasProduct(monetization, productId);
@@ -586,7 +586,7 @@ const ShopPage = () => {
               <Sparkles className="w-4 h-4 text-[hsl(var(--gold))]" />
               <p className="text-xs font-bold text-foreground uppercase tracking-wider">My Cosmetics</p>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-3 lg:items-start">
               {ownedCategories.map(({ key, label }) => {
                 const items = getOwnedCosmetics(monetization, key);
                 const active = getActiveCosmetic(monetization, key);

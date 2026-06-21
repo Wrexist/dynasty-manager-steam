@@ -4,6 +4,7 @@ import { getFitnessHexColor } from '@/utils/uiHelpers';
 import { Link, TrendingUp, TrendingDown } from 'lucide-react';
 import type { Player } from '@/types/game';
 import { PlayerCard } from './PlayerCard';
+import { isDesktop } from '@/platform/desktop';
 
 const HOT_FORM_MIN = 70;
 const COLD_FORM_MAX = 35;
@@ -58,6 +59,9 @@ export const BenchStrip = memo(function BenchStrip({
   const fitnessColor = getFitnessHexColor(player.fitness);
   const statusLabel = getStatusLabel(player, week);
   const fullName = `${player.firstName} ${player.lastName}`;
+  // Steam/Electron desktop: scale the bench shield up modestly (sm 64 → md
+  // 110) so it reads on a large window. Mobile/web keep the compact `sm` tile.
+  const benchSize = isDesktop() ? 'md' : 'sm';
 
   const chemDisplay = chemistryLinkCount > 9 ? '9+' : chemistryLinkCount;
   const formTrend: 'hot' | 'cold' | null =
@@ -75,6 +79,8 @@ export const BenchStrip = memo(function BenchStrip({
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
       className={cn(
         'relative shrink-0 cursor-pointer rounded-[12px] transition-transform duration-150',
+        // Hover affordance — subtle lift + gold ring on pointer devices (desktop).
+        'hover:scale-[1.06] hover:z-10 hover:ring-2 hover:ring-primary/50',
         isSelected && 'scale-[1.05] z-10',
         !isSelected && compatRing && COMPAT_RING_CLASSES[compatRing],
         !isSelected && isBestSub && 'shadow-[0_0_10px_hsl(var(--primary)/0.45)]',
@@ -87,7 +93,7 @@ export const BenchStrip = memo(function BenchStrip({
     >
       <PlayerCard
         player={player}
-        size="sm"
+        size={benchSize}
         interactive="none"
       />
 

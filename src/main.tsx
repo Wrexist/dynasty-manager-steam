@@ -13,6 +13,7 @@ import { useGameStore } from '@/store/gameStore';
 import { initSentry, addGameBreadcrumb } from '@/utils/sentry';
 import { track } from '@/utils/analytics';
 import { hydrateSaveStorage } from '@/store/helpers/persistence';
+import { isDesktop } from '@/platform/desktop';
 
 // Configures the SDK iff VITE_SENTRY_DSN is set — release tag, PII scrubbing,
 // and breadcrumb scrubbing live in src/utils/sentry.ts.
@@ -33,6 +34,13 @@ export const signalReady = () => {
   resolveAppReady?.();
   resolveAppReady = null;
 };
+
+// Desktop (Electron / Steam) build: tag the root so index.css can widen the
+// mobile-first layout to use the full window. Done synchronously before render
+// so the first paint already uses the desktop width (no narrow-column flash).
+if (isDesktop()) {
+  document.documentElement.classList.add('desktop');
+}
 
 createRoot(document.getElementById("root")!).render(<App />);
 
@@ -115,8 +123,10 @@ async function initNative() {
   try {
     const { Capacitor } = await import('@capacitor/core');
     if (!Capacitor.isNativePlatform()) {
-      // Web only — register service worker
-      if ('serviceWorker' in navigator) {
+      // Web only — register service worker. Skip under the Electron/Steam
+      // desktop build: it loads over a custom app:// protocol and the SW
+      // (designed for the web origin) would only cause caching grief there.
+      if ('serviceWorker' in navigator && !isDesktop()) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       }
       return;

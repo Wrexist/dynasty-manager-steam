@@ -89,7 +89,7 @@ const ModeSelect = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center p-6 safe-area-top safe-area-bottom">
       {/* Back button */}
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-xs lg:max-w-5xl">
         <Button
           variant="ghost"
           size="sm"
@@ -111,8 +111,8 @@ const ModeSelect = () => {
         <p className="text-sm text-muted-foreground mt-2">How do you want to play?</p>
       </motion.div>
 
-      {/* Mode Cards */}
-      <div className="w-full max-w-xs space-y-3.5">
+      {/* Mode Cards — single column on phones, card grid filling the width on desktop */}
+      <div className="w-full max-w-xs lg:max-w-5xl space-y-3.5 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-2 lg:gap-5">
         {modes.map((mode, idx) => {
           const disabled = mode.comingSoon;
           const handleClick = () => {
@@ -134,7 +134,7 @@ const ModeSelect = () => {
               onClick={handleClick}
               aria-disabled={disabled}
               className={cn(
-                'group relative w-full text-left rounded-2xl p-5 border overflow-hidden',
+                'group relative w-full lg:h-full text-left rounded-2xl p-5 lg:p-6 border overflow-hidden cursor-pointer',
                 // Liquid-glass base — matches GlassPanel so cards feel uniform
                 // with the rest of the app.
                 'bg-gradient-to-br from-[hsl(222_35%_14%/0.65)] via-[hsl(222_28%_10%/0.7)] to-[hsl(222_40%_7%/0.78)]',

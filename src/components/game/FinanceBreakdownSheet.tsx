@@ -1,8 +1,10 @@
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getFinanceBreakdown } from '@/utils/financeHelpers';
 import { cn } from '@/lib/utils';
+import { isDesktop } from '@/platform/desktop';
 import { ArrowUpRight, ArrowDownRight, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
 export type FinanceSheetMode = 'income' | 'expenses' | 'budget' | 'all';
@@ -19,6 +21,20 @@ export function FinanceBreakdownSheet({ open, onOpenChange, mode }: Props) {
   // sheet is open (or animating closed), so the full breakdown is no
   // longer recomputed on every Dashboard render while the sheet is shut —
   // and both the open and close animations keep working.
+  // On desktop (Steam/Electron) a bottom-sheet reads as a phone affordance —
+  // render a centered, width-capped Dialog instead. Mobile/web keeps the
+  // bottom Sheet. Both preserve open/close via onOpenChange.
+  if (isDesktop()) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md lg:max-w-lg w-[calc(100%-2rem)] mx-auto bg-background/95 backdrop-blur-xl border border-border/50 rounded-2xl max-h-[85vh] overflow-y-auto">
+          <DialogTitle className="sr-only">Finance Breakdown</DialogTitle>
+          <FinanceBreakdownBody mode={mode} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="bg-background/95 backdrop-blur-xl border-t border-border/50 rounded-t-2xl max-h-[85vh] overflow-y-auto pb-8">

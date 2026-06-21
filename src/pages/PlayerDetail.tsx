@@ -231,7 +231,7 @@ const PlayerDetail = () => {
   const gcPerApp = player.appearances > 0 ? (goalContributions / player.appearances).toFixed(2) : '0.00';
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[88rem] px-4 lg:px-8 py-4 space-y-4">
       <PageHint screen="playerDetail" title={PAGE_HINTS.playerDetail.title} body={PAGE_HINTS.playerDetail.body} />
 
       {/* Header */}
@@ -326,6 +326,10 @@ const PlayerDetail = () => {
         </div>
       )}
 
+      {/* Two-column desktop layout: left = ratings/attributes, right = status/economy/history */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:items-start">
+      {/* LEFT COLUMN */}
+      <div className="space-y-4 min-w-0">
       {/* Happiness Recovery Guide */}
       {happinessTips && (
         <GlassPanel className="p-4">
@@ -466,7 +470,7 @@ const PlayerDetail = () => {
                     setIndividualTraining(player.id, isActive ? null : module);
                   }}
                   className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all border',
+                    'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all border cursor-pointer',
                     isActive
                       ? 'bg-primary/20 text-primary border-primary/30'
                       : 'bg-muted/30 text-muted-foreground border-transparent hover:bg-muted/50'
@@ -680,7 +684,11 @@ const PlayerDetail = () => {
           </div>
         </GlassPanel>
       )}
+      </div>
+      {/* end LEFT COLUMN */}
 
+      {/* RIGHT COLUMN */}
+      <div className="space-y-4 min-w-0">
       {/* Season Stats */}
       <GlassPanel className="p-4">
         <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Season Stats</p>
@@ -782,7 +790,7 @@ const PlayerDetail = () => {
             <button
               type="button"
               onClick={() => setShowFullHistory(!showFullHistory)}
-              className="text-[10px] text-primary mt-2 w-full text-center"
+              className="text-[10px] text-primary mt-2 w-full text-center cursor-pointer hover:underline"
             >
               {showFullHistory ? 'Show Less' : `Show All (${player.matchHistory.length})`}
             </button>
@@ -1046,6 +1054,11 @@ const PlayerDetail = () => {
           </div>
         </GlassPanel>
       )}
+
+      </div>
+      {/* end RIGHT COLUMN */}
+      </div>
+      {/* end two-column grid */}
 
       {/* Approach / Loan Modals */}
       {showApproach && (

@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { hapticMedium, hapticHeavy, hapticLight } from '@/utils/haptics';
 import { errorToast } from '@/utils/gameToast';
 import { FlagIcon } from '@/components/game/FlagIcon';
+import { PlayerCard } from '@/components/game/PlayerCard';
 import { CONTRACT_MIN_YEARS, CONTRACT_MAX_YEARS, CONTRACT_MAX_STRIKES } from '@/config/contracts';
 
 export function ContractNegotiation() {
@@ -152,13 +153,26 @@ export function ContractNegotiation() {
         </div>
 
         <div className="p-4 space-y-4">
-          {/* Status */}
+          {/* Status — the FUT-style card is the hero of the signed-contract
+              celebration, rendered large and centered with the full 6-stat
+              layout (PAC/SHO/PAS/DRI/DEF/PHY) on display. */}
           {activeNegotiation.status === 'accepted' && (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center gap-2">
-              <Check className="w-5 h-5 text-emerald-400" />
-              <div>
-                <p className="text-sm font-bold text-emerald-400">Deal Agreed!</p>
-                <p className="text-xs text-muted-foreground">{player.lastName} signs at {formatWage(activeNegotiation.offeredWage)} for {activeNegotiation.contractYears} year(s)</p>
+            <div className="flex flex-col items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-emerald-400">
+                <Check className="w-5 h-5" />
+                <p className="text-base font-black font-display tracking-wide">Deal Agreed!</p>
+              </div>
+              <PlayerCard player={player} size="xl" interactive="none" />
+              <div className="text-center min-w-0 w-full">
+                <p className="font-bold text-foreground font-display text-lg leading-tight truncate">
+                  {player.firstName} {player.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5 flex items-center justify-center gap-1">
+                  {player.position} · {player.age}y · <FlagIcon nationality={player.nationality} size={14} />
+                </p>
+                <p className="text-xs text-emerald-400/90 font-medium mt-1">
+                  Signs at {formatWage(activeNegotiation.offeredWage)} for {activeNegotiation.contractYears} year{activeNegotiation.contractYears !== 1 ? 's' : ''}
+                </p>
               </div>
             </div>
           )}

@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { Capacitor } from '@capacitor/core';
+import { openExternalDesktop } from '@/platform/desktop';
 
 /**
  * Open an external URL in a system-managed browser.
@@ -33,5 +34,8 @@ export async function openExternalUrl(url: string): Promise<void> {
       // Fall through to window.open as a last-ditch attempt.
     }
   }
+  // Desktop (Electron / Steam): hand off to the main process so the link opens
+  // in the OS browser cleanly, rather than relying on the window-open intercept.
+  if (openExternalDesktop(url)) return;
   window.open(url, '_blank', 'noopener,noreferrer');
 }

@@ -18,7 +18,7 @@ const ComparisonPage = () => {
 
   if (squadPlayers.length < 2) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+      <div className="mx-auto w-full max-w-3xl px-4 lg:px-8 py-4 space-y-3">
         <GlassPanel className="p-6 text-center">
           <p className="text-muted-foreground">Need at least 2 players to compare.</p>
         </GlassPanel>
@@ -42,12 +42,12 @@ const ComparisonPage = () => {
   ] : [];
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <div className="mx-auto w-full max-w-5xl px-4 lg:px-8 py-4 space-y-3">
       <PageHint screen="comparison" title={PAGE_HINTS.comparison.title} body={PAGE_HINTS.comparison.body} />
       <h2 className="text-lg font-display font-bold text-foreground">Player Comparison</h2>
 
       {/* Player Selectors */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:gap-4">
         <GlassPanel className="p-3">
           <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Player A</label>
           <select
@@ -83,9 +83,9 @@ const ComparisonPage = () => {
         </GlassPanel>
       )}
 
-      {/* Radar Chart */}
+      {/* Radar Chart + Stat Table — side by side on desktop */}
       {playerA && playerB && (
-        <>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 lg:items-start">
           <GlassPanel className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -97,7 +97,8 @@ const ComparisonPage = () => {
                 <div className="w-3 h-3 rounded-full bg-emerald-400" />
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={220}>
+            <div className="h-80 lg:h-96 xl:h-[28rem]">
+            <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
                 <PolarGrid stroke="hsl(var(--border))" />
                 <PolarAngleAxis dataKey="attr" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
@@ -105,6 +106,7 @@ const ComparisonPage = () => {
                 <Radar name={playerB.lastName} dataKey="b" stroke={CHART_COLORS.COMPARISON} fill={CHART_COLORS.COMPARISON} fillOpacity={CHART_COLORS.FILL_OPACITY_SECONDARY} strokeWidth={CHART_COLORS.STROKE_WIDTH} />
               </RadarChart>
             </ResponsiveContainer>
+            </div>
           </GlassPanel>
 
           {/* Stat Comparison Table */}
@@ -125,16 +127,16 @@ const ComparisonPage = () => {
                 const bWins = lower ? b < a : b > a;
                 const fmt = (v: number) => format === 'money' ? `£${(v / 1e6).toFixed(1)}M` : format === 'wage' ? `£${(v / 1000).toFixed(0)}K` : String(v);
                 return (
-                  <div key={label} className="flex items-center text-xs">
-                    <span className={cn('w-16 tabular-nums text-right', aWins ? 'text-primary font-bold' : 'text-muted-foreground')}>{fmt(a)}</span>
-                    <span className="flex-1 text-center text-muted-foreground text-[10px]">{label}</span>
-                    <span className={cn('w-16 tabular-nums', bWins ? 'text-emerald-400 font-bold' : 'text-muted-foreground')}>{fmt(b)}</span>
+                  <div key={label} className="flex items-center text-xs lg:text-sm lg:py-1.5 lg:px-2 lg:rounded-lg lg:hover:bg-muted/20 lg:transition-colors">
+                    <span className={cn('w-16 lg:w-24 tabular-nums text-right', aWins ? 'text-primary font-bold' : 'text-muted-foreground')}>{fmt(a)}</span>
+                    <span className="flex-1 text-center text-muted-foreground text-[10px] lg:text-xs uppercase tracking-wider">{label}</span>
+                    <span className={cn('w-16 lg:w-24 tabular-nums', bWins ? 'text-emerald-400 font-bold' : 'text-muted-foreground')}>{fmt(b)}</span>
                   </div>
                 );
               })}
             </div>
           </GlassPanel>
-        </>
+        </div>
       )}
     </div>
   );

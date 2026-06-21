@@ -93,6 +93,15 @@ const LeagueTable = () => {
     return currentFixtures.filter(m => m.week === browseWeek);
   }, [divisionFixtures, selectedDiv, browseWeek]);
 
+  // Most recent played fixtures in this division (for the desktop side panel).
+  const recentResults = useMemo(() => {
+    const fixtures = divisionFixtures[selectedDiv] || [];
+    return fixtures
+      .filter(m => m.played)
+      .sort((a, b) => b.week - a.week)
+      .slice(0, 6);
+  }, [divisionFixtures, selectedDiv]);
+
   // Stats leaders for selected division
   const { topScorers, topAssisters } = useMemo(() => {
     const divClubIds = new Set(divisionClubs[selectedDiv] || []);
@@ -173,7 +182,7 @@ const LeagueTable = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-4">
       <PageHint
         screen="league-table"
         title="League Table"
@@ -410,7 +419,8 @@ const LeagueTable = () => {
 
       {/* Table Tab */}
       {tab === 'table' && (
-        <>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-6 lg:items-start">
+        <div>
         <div className="relative mb-2">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <input
@@ -437,7 +447,7 @@ const LeagueTable = () => {
           <div className="overflow-x-auto">
             {/* table-fixed so the Club column truncates cleanly instead of
                 the auto-layout squeezing every column at 375px width. */}
-            <table className="w-full text-sm table-fixed">
+            <table className="w-full text-sm table-fixed lg:[&_td]:py-3 lg:[&_th]:py-3">
               <thead>
                 <tr className="border-b border-border/30">
                   <th className="text-left px-1 py-2 text-[10px] text-muted-foreground uppercase w-6">#</th>
@@ -468,7 +478,7 @@ const LeagueTable = () => {
                       onClick={() => handleSelectClub(entry.clubId)}
                       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectClub(entry.clubId); } }}
                       className={cn(
-                        'border-b border-border/10 cursor-pointer active:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:bg-muted/40',
+                        'border-b border-border/10 cursor-pointer hover:bg-muted/20 active:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:bg-muted/40',
                         zoneBgClass(zone),
                         isPlayer && 'bg-primary/5 shadow-[inset_0_0_12px_hsl(var(--primary)/0.05)] border-l-2 border-l-primary'
                       )}
@@ -565,7 +575,114 @@ const LeagueTable = () => {
             )}
           </div>
         </GlassPanel>
-        </>
+        </div>
+
+        {/* Stats side panel — desktop only; mirrors the Stats Leaders tab so the
+            wide canvas isn't wasted while reading the table. */}
+        <aside className="hidden lg:block space-y-4">
+          <GlassPanel className="p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Top Scorers</p>
+            {topScorers.length > 0 ? (
+              <div className="space-y-2">
+                {topScorers.map((p, i) => {
+                  const pClub = clubs[p.clubId];
+                  return (
+                    <div
+                      key={p.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`View ${p.firstName} ${p.lastName}`}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPlayer(p.id); } }}
+                      className="flex items-center gap-3 cursor-pointer rounded-lg px-1 py-0.5 hover:bg-muted/30 active:opacity-70 focus-visible:outline-none focus-visible:bg-muted/40 transition-colors"
+                      onClick={() => selectPlayer(p.id)}
+                    >
+                      <span className={cn('w-5 text-xs font-bold text-center', i === 0 ? 'text-primary' : 'text-muted-foreground')}>{i + 1}</span>
+                      <div className="w-4 h-4 rounded-full shrink-0" style={{ backgroundColor: pClub?.color }} />
+                      <div className="flex-1 min-w-0">
+                        <p className={cn('text-sm font-medium truncate', p.clubId === playerClubId ? 'text-primary' : 'text-foreground')}>
+                          {p.firstName[0]}. {p.lastName}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">{p.position} {'•'} {getClubDisplayName(pClub?.name || '?')}</p>
+                      </div>
+                      <span className={cn('text-sm font-mono font-bold', i === 0 ? 'text-primary' : 'text-foreground')}>{p.goals}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No goals scored yet</p>
+            )}
+          </GlassPanel>
+
+          <GlassPanel className="p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Top Assists</p>
+            {topAssisters.length > 0 ? (
+              <div className="space-y-2">
+                {topAssisters.map((p, i) => {
+                  const pClub = clubs[p.clubId];
+                  return (
+                    <div
+                      key={p.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`View ${p.firstName} ${p.lastName}`}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPlayer(p.id); } }}
+                      className="flex items-center gap-3 cursor-pointer rounded-lg px-1 py-0.5 hover:bg-muted/30 active:opacity-70 focus-visible:outline-none focus-visible:bg-muted/40 transition-colors"
+                      onClick={() => selectPlayer(p.id)}
+                    >
+                      <span className={cn('w-5 text-xs font-bold text-center', i === 0 ? 'text-primary' : 'text-muted-foreground')}>{i + 1}</span>
+                      <div className="w-4 h-4 rounded-full shrink-0" style={{ backgroundColor: pClub?.color }} />
+                      <div className="flex-1 min-w-0">
+                        <p className={cn('text-sm font-medium truncate', p.clubId === playerClubId ? 'text-primary' : 'text-foreground')}>
+                          {p.firstName[0]}. {p.lastName}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">{p.position} {'•'} {getClubDisplayName(pClub?.name || '?')}</p>
+                      </div>
+                      <span className={cn('text-sm font-mono font-bold', i === 0 ? 'text-primary' : 'text-foreground')}>{p.assists}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No assists recorded yet</p>
+            )}
+          </GlassPanel>
+
+          {/* Recent fixtures — most recent played matches in this league, so the
+              desktop side panel surfaces match context next to the table. */}
+          <GlassPanel className="p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Recent Results</p>
+            {recentResults.length > 0 ? (
+              <div className="space-y-1.5">
+                {recentResults.map(match => {
+                  const homeClub = clubs[match.homeClubId];
+                  const awayClub = clubs[match.awayClubId];
+                  const isPlayerMatch = match.homeClubId === playerClubId || match.awayClubId === playerClubId;
+                  return (
+                    <div
+                      key={match.id}
+                      className={cn(
+                        'flex items-center gap-2 text-xs rounded-lg px-2 py-1.5 transition-colors',
+                        isPlayerMatch ? 'bg-primary/5' : 'hover:bg-muted/20'
+                      )}
+                    >
+                      <span className={cn('flex-1 text-right truncate', match.homeClubId === playerClubId ? 'text-primary font-bold' : 'text-foreground')}>
+                        {getClubDisplayName(homeClub?.name || '?')}
+                      </span>
+                      <span className="font-mono font-bold text-foreground shrink-0 tabular-nums">{match.homeGoals}-{match.awayGoals}</span>
+                      <span className={cn('flex-1 truncate', match.awayClubId === playerClubId ? 'text-primary font-bold' : 'text-foreground')}>
+                        {getClubDisplayName(awayClub?.name || '?')}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No results yet</p>
+            )}
+          </GlassPanel>
+        </aside>
+        </div>
       )}
 
       {/* Fixtures Tab */}
@@ -600,7 +717,7 @@ const LeagueTable = () => {
             </button>
           </GlassPanel>
 
-          <div className="space-y-2">
+          <div className="space-y-2 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-2">
             {weekFixtures.length > 0 ? (
               weekFixtures.map(match => {
                 const homeClub = clubs[match.homeClubId];
@@ -664,7 +781,7 @@ const LeagueTable = () => {
 
       {/* Stats Leaders Tab */}
       {tab === 'stats' && (
-        <div className="space-y-4">
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-4 lg:items-start max-w-4xl mx-auto">
           <GlassPanel className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Top Scorers</p>
             {topScorers.length > 0 ? (
@@ -678,7 +795,7 @@ const LeagueTable = () => {
                       tabIndex={0}
                       aria-label={`View ${p.firstName} ${p.lastName}`}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPlayer(p.id); } }}
-                      className="flex items-center gap-3 cursor-pointer active:opacity-70 focus-visible:outline-none focus-visible:opacity-70"
+                      className="flex items-center gap-3 cursor-pointer rounded-lg px-1 py-0.5 hover:bg-muted/30 active:opacity-70 focus-visible:outline-none focus-visible:opacity-70 transition-colors"
                       onClick={() => selectPlayer(p.id)}
                     >
                       <span className={cn('w-5 text-xs font-bold text-center', i === 0 ? 'text-primary' : 'text-muted-foreground')}>{i + 1}</span>
@@ -712,7 +829,7 @@ const LeagueTable = () => {
                       tabIndex={0}
                       aria-label={`View ${p.firstName} ${p.lastName}`}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPlayer(p.id); } }}
-                      className="flex items-center gap-3 cursor-pointer active:opacity-70 focus-visible:outline-none focus-visible:opacity-70"
+                      className="flex items-center gap-3 cursor-pointer rounded-lg px-1 py-0.5 hover:bg-muted/30 active:opacity-70 focus-visible:outline-none focus-visible:opacity-70 transition-colors"
                       onClick={() => selectPlayer(p.id)}
                     >
                       <span className={cn('w-5 text-xs font-bold text-center', i === 0 ? 'text-primary' : 'text-muted-foreground')}>{i + 1}</span>

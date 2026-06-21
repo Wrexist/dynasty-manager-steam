@@ -23,6 +23,7 @@ import { NATIVE_ADS_READY, showRewardedAd } from '@/utils/ads';
 import { purchaseConsumable } from '@/utils/purchases';
 import { readPendingPackCredit, writePendingPackCredit, clearPendingPackCredit } from '@/store/helpers/persistence';
 import { isReviewWorthyPackTier, maybeRequestReview } from '@/utils/appReview';
+import { isDesktop } from '@/platform/desktop';
 
 function playerTier(ovr: number) {
   for (const t of PLAYER_TIER_THRESHOLDS) if (ovr >= t.min) return t;
@@ -428,11 +429,16 @@ const PacksPage = () => {
 
   const recentPacks = openedPacks.slice(0, RECENT_PULLS_LIMIT);
 
+  // On the Steam/Electron desktop build the recent-pulls strip becomes a
+  // wrapping grid of wider cards with a larger top-pull shield, instead of a
+  // tight mobile horizontal scroller. Mobile/web keep the scroller.
+  const desktop = isDesktop();
+
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="mx-auto w-full max-w-[90rem] px-4 lg:px-8">
       <PageHint screen="packs" title={PAGE_HINTS.packs.title} body={PAGE_HINTS.packs.body} />
 
-      <div className="px-4 pb-6 space-y-3">
+      <div className="pb-6 space-y-3">
         {/* Compact status row — budget + squad + reset countdown all on
             one line. The "Player Packs" title block above this used to
             cost ~60px of vertical space before the pack tile even
@@ -473,9 +479,12 @@ const PacksPage = () => {
           </div>
         </div>
 
+        {/* Desktop: featured hero beside the full pack grid so the shop fills
+            the width instead of a single narrow column. */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {/* Featured hero — header inlined to save vertical space; the
             flame + label + pack are visually one unit. */}
-        <div>
+        <div className="lg:col-span-1">
           <div className="flex items-center gap-1.5 mb-1.5">
             <Flame className="w-3.5 h-3.5 text-primary" />
             <h3 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Featured Pack</h3>
@@ -494,9 +503,9 @@ const PacksPage = () => {
         </div>
 
         {/* Standard pack grid */}
-        <div>
+        <div className="lg:col-span-2">
           <h3 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">All Packs</h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
             {nonFeatured.map(tier => (
               <PackShopCard
                 key={tier.key}
@@ -511,6 +520,7 @@ const PacksPage = () => {
               />
             ))}
           </div>
+        </div>
         </div>
 
         {/* Guarantee Tracker — premium "what's coming next" reward meter.
@@ -617,7 +627,13 @@ const PacksPage = () => {
         {recentPacks.length > 0 && (
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Recent Pulls</h3>
-            <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+            <div
+              className={cn(
+                desktop
+                  ? 'grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4'
+                  : 'flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide',
+              )}
+            >
               {recentPacks.map(rec => {
                 const tier = PACK_TIER_MAP[rec.tier];
                 const pulled = rec.playerIds.map(id => players[id]).filter(Boolean) as Player[];
@@ -631,7 +647,8 @@ const PacksPage = () => {
                     onClick={() => { hapticLight(); setReplay({ tier: rec.tier, players: pulled }); }}
                     className={cn(
                       LIQUID_GLASS_SURFACE,
-                      'group shrink-0 w-48 text-left p-3 transition-transform',
+                      'group text-left p-3 transition-transform',
+                      desktop ? 'w-full p-4' : 'shrink-0 w-48',
                       'hover:-translate-y-0.5 active:scale-[0.98]',
                       'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
                     )}
@@ -668,10 +685,10 @@ const PacksPage = () => {
                         side text for player tier. */}
                     <div className="relative flex items-center gap-2.5">
                       <div className="shrink-0">
-                        <PlayerCard player={best} size="sm" interactive="none" compact />
+                        <PlayerCard player={best} size={desktop ? 'md' : 'sm'} interactive="none" compact />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-foreground leading-tight truncate">
+                        <p className={cn('font-bold text-foreground leading-tight truncate', desktop ? 'text-base' : 'text-sm')}>
                           {best.firstName.charAt(0)}. {best.lastName}
                         </p>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground leading-tight mt-0.5 truncate">

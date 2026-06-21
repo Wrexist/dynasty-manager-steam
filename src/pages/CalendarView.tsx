@@ -334,7 +334,7 @@ const CalendarView = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[90rem] px-4 lg:px-8 py-4 space-y-4">
       <PageHint
         screen="calendar"
         title="Season Calendar"
@@ -481,7 +481,7 @@ const CalendarView = () => {
               )} />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-x-3 lg:gap-y-1">
               {phase.entries.map((entry) => {
                 const isCurrentWeek = entry.week === week;
                 const isCongested = congestedWeeks.has(entry.week);
@@ -611,7 +611,7 @@ const CalendarView = () => {
           !isCurrent && !isPast && 'bg-card/40',
           isPast && 'bg-card/20 opacity-60',
           isDerby && !isCurrent && 'border-l-2 border-l-amber-500/70',
-          handleClick && 'cursor-pointer active:scale-[0.98]',
+          handleClick && 'cursor-pointer hover:bg-card/60 active:scale-[0.98]',
         )}
       >
         {/* Week number */}

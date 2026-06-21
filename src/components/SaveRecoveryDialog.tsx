@@ -50,7 +50,7 @@ export function SaveRecoveryDialog() {
 
   return (
     <Dialog open={true} onOpenChange={(next) => { if (!next) handleSkip(); }}>
-      <DialogContent className="max-w-sm mx-auto bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl">
+      <DialogContent className="max-w-sm md:max-w-md mx-auto bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/15 border border-amber-400/30">
@@ -74,7 +74,7 @@ export function SaveRecoveryDialog() {
             <button
               type="button"
               onClick={handleRecover}
-              className="w-full h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
+              className="w-full h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
             >
               Try Recovery from Backup
             </button>
@@ -82,7 +82,7 @@ export function SaveRecoveryDialog() {
           <button
             type="button"
             onClick={handleSkip}
-            className="w-full h-11 rounded-full bg-white/[0.08] border border-white/15 text-foreground/90 font-semibold text-sm hover:bg-white/[0.12] transition-colors"
+            className="w-full h-11 rounded-full bg-white/[0.08] border border-white/15 text-foreground/90 font-semibold text-sm hover:bg-white/[0.12] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             {kind === 'newer_version' ? 'OK' : 'Skip'}
           </button>

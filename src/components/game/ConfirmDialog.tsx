@@ -44,7 +44,7 @@ export function ConfirmDialog({
       <DialogContent
         className={cn(
           // Sizing + layout
-          'max-w-sm w-[calc(100%-2rem)] mx-auto p-5 gap-3',
+          'max-w-sm md:max-w-md w-[calc(100%-2rem)] mx-auto p-5 gap-3',
           // Liquid-glass surface (gradient + blur + multi-layer rim)
           'rounded-3xl border-0 transform-gpu overflow-hidden',
           'bg-gradient-to-br from-[hsl(222_35%_14%/0.78)] via-[hsl(222_28%_10%/0.82)] to-[hsl(222_40%_7%/0.9)]',
@@ -89,7 +89,7 @@ export function ConfirmDialog({
             type="button"
             onClick={handleCancel}
             className={cn(
-              'flex-1 h-11 rounded-2xl text-[14px] font-semibold transition-all',
+              'flex-1 h-11 rounded-2xl text-[14px] font-semibold transition-all cursor-pointer',
               'bg-white/[0.06] text-foreground hover:bg-white/[0.10] active:scale-[0.98]',
               'shadow-[inset_0_1px_0_rgba(255,255,255,0.10),inset_0_0_0_1px_rgba(255,255,255,0.06)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
@@ -101,7 +101,7 @@ export function ConfirmDialog({
             type="button"
             onClick={handleConfirm}
             className={cn(
-              'flex-1 h-11 rounded-2xl text-[14px] font-semibold transition-all active:scale-[0.98]',
+              'flex-1 h-11 rounded-2xl text-[14px] font-semibold transition-all active:scale-[0.98] cursor-pointer',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0',
               variant === 'destructive'
                 ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_20px_-8px_hsl(0_72%_51%/0.6)] focus-visible:ring-destructive/60'

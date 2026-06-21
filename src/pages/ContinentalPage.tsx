@@ -118,7 +118,7 @@ function TournamentView({ tournament, competition }: { tournament: ContinentalTo
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 15 }}
             transition={{ duration: 0.25 }}
-            className="space-y-3"
+            className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-4 lg:gap-4 lg:items-start"
           >
             {/* Copy before sorting — .sort() in place would mutate (and persist)
                 the live store array during render. */}
@@ -200,7 +200,7 @@ const ContinentalPage = () => {
 
   if (!tournament) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6">
         <div className="text-center text-muted-foreground py-12">
           <Globe className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p className="text-sm">
@@ -213,7 +213,7 @@ const ContinentalPage = () => {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6 space-y-4">
       <PageHint
         screen="continental"
         title="Continental Competition"

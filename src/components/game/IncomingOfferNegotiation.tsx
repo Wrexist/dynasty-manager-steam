@@ -170,7 +170,7 @@ export function IncomingOfferNegotiation({ offer, onClose }: Props) {
         {/* Modal */}
         <motion.div
           ref={containerRef}
-          className="relative w-full max-w-sm mx-4 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl overflow-hidden"
+          className="relative w-full max-w-sm md:max-w-md lg:max-w-xl mx-4 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl overflow-hidden"
           initial={{ scale: 0.85, opacity: 0, y: 40 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -700,14 +700,14 @@ export function IncomingOfferNegotiation({ offer, onClose }: Props) {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground bg-muted/30 hover:bg-muted/50 active:scale-[0.98] transition-all"
+                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground bg-muted/30 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSubmitCounter(counterFee)}
-                  className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-xl text-base font-black bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(16,185,129,0.25)]"
+                  className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-xl text-base font-black bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(16,185,129,0.25)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                 >
                   Submit Counter <ArrowRight className="w-4 h-4" />
                 </button>

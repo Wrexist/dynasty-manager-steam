@@ -134,11 +134,15 @@ const TrainingPage = () => {
   }, [squadPlayers, club?.divisionId]);
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="px-4 pb-4 space-y-3">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8">
+      <div className="pb-4 space-y-3">
         <PageHint screen="training" title={PAGE_HINTS.training.title} body={PAGE_HINTS.training.body} />
         <h2 className="text-lg font-display font-bold text-foreground">Training</h2>
 
+        {/* Desktop: masonry two-column flow so the many variable-height panels
+            fill the width without leaving a single stretched column. Each
+            top-level child stays in source order; columns balance them. */}
+        <div className="space-y-3 lg:space-y-0 lg:columns-2 lg:gap-3 [&>*]:lg:mb-3 [&>*]:lg:break-inside-avoid">
         {/* Training Report Card */}
         <AnimatePresence>
           {report && report.totalGains > 0 && (
@@ -715,6 +719,7 @@ const TrainingPage = () => {
             />
           </GlassPanel>
         )}
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@
 
 import type { MonetizationState, ProductId, CosmeticCategory, AdRewardType, SubscriptionInfo } from '@/types/game';
 import { COSMETIC_ITEMS, AD_REWARD_LIMITS, STARTER_KIT_WINDOW_MS, PRO_ONE_TIME_PRODUCT_IDS } from '@/config/monetization';
+import { isDesktop } from '@/platform/desktop';
 
 /** Check if a subscription has expired */
 function isSubscriptionExpired(sub: SubscriptionInfo): boolean {
@@ -31,6 +32,12 @@ export function isSubscriptionActive(state: MonetizationState): boolean {
  *  because RevenueCat keeps expired subs in `allPurchasedProductIdentifiers`
  *  forever — the only valid source for sub status is `subscription.expiresAt`. */
 export function isPro(state: MonetizationState): boolean {
+  // Steam desktop build is premium one-time: the purchase IS the game, so all
+  // Pro features (instant sim, advanced analytics, custom tactics, expanded
+  // press, etc.) are unlocked. This is the single source of truth for Pro, so
+  // gating it here also suppresses every contextual upsell (starter kit,
+  // instant-sim prompt, Pro-gated panels) without per-call-site changes.
+  if (isDesktop()) return true;
   if (PRO_ONE_TIME_PRODUCT_IDS.some(id => state.entitlements.includes(id))) return true;
   if (isSubscriptionActive(state)) return true;
   return false;

@@ -35,7 +35,7 @@ const ClubPage = () => {
   const netWeekly = breakdown?.net ?? 0;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-4 lg:columns-2 xl:columns-3 lg:gap-5 lg:space-y-0 [&>*]:mb-4 lg:[&>*]:mb-5 [&>*]:break-inside-avoid">
       <PageHint
         screen="club"
         title="Club Overview"
@@ -43,7 +43,7 @@ const ClubPage = () => {
       />
 
       {/* Club Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 lg:[column-span:all]">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-lg font-black" style={{ backgroundColor: club.color, color: club.secondaryColor }}>
           {club.shortName}
         </div>

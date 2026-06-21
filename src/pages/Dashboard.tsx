@@ -634,7 +634,7 @@ const Dashboard = () => {
 
   if (!club) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-8 flex items-center justify-center">
+      <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-8 flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-primary animate-spin" />
       </div>
     );
@@ -677,7 +677,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-4 space-y-4 xl:[column-fill:balance] xl:columns-2 2xl:columns-3 xl:gap-5 xl:space-y-0 xl:[&>*]:mb-5 xl:[&>*]:break-inside-avoid">
       {/* Welcome overlay for first-time players */}
       {showWelcome && <WelcomeOverlay onComplete={dismissWelcome} />}
 

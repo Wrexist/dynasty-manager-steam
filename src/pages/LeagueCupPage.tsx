@@ -169,7 +169,7 @@ const LeagueCupPage = () => {
 
   if (!leagueCup || !leagueCup.ties.length) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6">
         <div className="text-center text-muted-foreground py-12">
           <Award className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p className="text-sm">No League Cup competition this season.</p>
@@ -181,7 +181,7 @@ const LeagueCupPage = () => {
   const winnerClub = leagueCup.winner ? clubs[leagueCup.winner] : null;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+    <div className="mx-auto w-full max-w-[100rem] px-4 lg:px-8 py-6 space-y-6">
       <PageHint
         screen="league-cup"
         title="League Cup"
@@ -239,6 +239,8 @@ const LeagueCupPage = () => {
         </motion.div>
       )}
 
+      {/* Rounds — vertical stack on mobile, wide multi-column rounds on desktop */}
+      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-x-8 lg:gap-y-6 lg:items-start">
       {ROUND_ORDER.map((round, i) => {
         const ties = leagueCup.ties.filter(t => t.round === round && t.awayClubId !== CUP_BYE_MARKER);
         if (ties.length === 0) return null;
@@ -266,6 +268,7 @@ const LeagueCupPage = () => {
           </motion.div>
         );
       })}
+      </div>
     </div>
   );
 };
