@@ -13,6 +13,7 @@ import { useGameStore } from '@/store/gameStore';
 import { initSentry, addGameBreadcrumb } from '@/utils/sentry';
 import { track } from '@/utils/analytics';
 import { hydrateSaveStorage } from '@/store/helpers/persistence';
+import { isDesktop } from '@/platform/desktop';
 
 // Configures the SDK iff VITE_SENTRY_DSN is set — release tag, PII scrubbing,
 // and breadcrumb scrubbing live in src/utils/sentry.ts.
@@ -115,8 +116,10 @@ async function initNative() {
   try {
     const { Capacitor } = await import('@capacitor/core');
     if (!Capacitor.isNativePlatform()) {
-      // Web only — register service worker
-      if ('serviceWorker' in navigator) {
+      // Web only — register service worker. Skip under the Electron/Steam
+      // desktop build: it loads over a custom app:// protocol and the SW
+      // (designed for the web origin) would only cause caching grief there.
+      if ('serviceWorker' in navigator && !isDesktop()) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       }
       return;
