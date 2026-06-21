@@ -15,7 +15,7 @@
 //    are deliberately NOT added yet — they land in Phase 4/5 alongside the
 //    steamworks.js integration and overlay testing.
 
-const { app, BrowserWindow, protocol, net, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, protocol, net, shell, ipcMain, Menu } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
@@ -143,6 +143,10 @@ if (!app.requestSingleInstanceLock()) {
 
   app.whenReady().then(() => {
     registerAppProtocol();
+    // Production: drop the generic File/Edit/View/Window/Help menu bar for a
+    // premium game window. Dev keeps the default menu so reload (Ctrl+R) and
+    // DevTools (F12) accelerators stay available.
+    if (!isDev) Menu.setApplicationMenu(null);
     createWindow();
 
     app.on('activate', () => {

@@ -34,3 +34,17 @@ export function getElectronAPI(): ElectronAPI | undefined {
 export function isDesktop(): boolean {
   return !!getElectronAPI()?.isElectron;
 }
+
+/**
+ * Open an external URL via the Electron main process (OS browser).
+ * Returns true if handled by the desktop bridge, false otherwise (so callers
+ * can fall back to web `window.open`). Never throws.
+ */
+export function openExternalDesktop(url: string): boolean {
+  const api = getElectronAPI();
+  if (api?.openExternal) {
+    void api.openExternal(url);
+    return true;
+  }
+  return false;
+}
