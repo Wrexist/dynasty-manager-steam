@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.dynastymanager.steam",
+  "productName": "Dynasty Manager",
+  "copyright": "Dynasty Manager",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*"
+  ],
+  "asar": true,
+  "win": {
+    "target": [
+      "dir"
+    ],
+    "artifactName": "${productName}-${version}-win.${ext}"
+  },
+  "_comment": "win target is 'dir' (unpacked) because Steam handles installation via SteamPipe depots — the release/win-unpacked folder is what gets uploaded. Swap to 'nsis' or 'portable' only for standalone non-Steam distribution."
+}

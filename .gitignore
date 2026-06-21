@@ -16,6 +16,10 @@ dist
 dist-ssr
 *.local
 
+# Electron (Steam) build output
+release
+dist-electron
+
 # Environment variables
 .env
 .env.*
