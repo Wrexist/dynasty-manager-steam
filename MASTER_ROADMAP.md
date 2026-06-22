@@ -165,15 +165,19 @@ The biggest review risk per `STEAM_PORT.md`. Current `lg:` breakpoints (1024px) 
 - ⬜ Still open: `aria-describedby` on the Radix dialogs; per-event MatchDay
   commentary labels under the existing `aria-live` region.
 
-### P3-4 🟡 DEFERRED (needs visual verification) — Reduced-motion compliance
-~55 `repeat: Infinity` loops across 22 files; framer's `reducedMotion` doesn't
-stop opacity/filter loops. **But most are user-initiated spectacle** (pack
-opening, walkouts, celebrations) that are risky to alter blindly and can't be
-visually verified in CI. The in-game `settings.reducedMotion` toggle already
-gives users a global escape hatch (MotionConfig `"always"`). When tackled, scope
-to **ambient persistent loops only** (negotiation rings, TalentTree, WeeklyDigest,
-TournamentHeader) via a combined hook (framer `useReducedMotion()` + the in-game
-setting), and verify each visually. Don't touch the spectacle animations.
+### P3-4 🟡 PARTIAL — Reduced-motion compliance
+- ✅ New `useReducedMotionPref()` hook ORs three signals: OS `prefers-reduced-
+  motion`, in-game **Reduced Motion**, and **Performance Mode**. (framer's
+  MotionConfig only stops transform/layout loops, not opacity/color/filter.) Tested.
+- ✅ Gated the ambient **opacity/color** loops framer misses: TalentTree
+  available-perk pulse ring (opacity), TransferNegotiation "Negotiating…"
+  ring (borderColor) + dots (opacity) → static under reduced motion.
+- ℹ️ TournamentHeader's winner pulse is **scale-only** → already handled by
+  framer; no change needed.
+- ⬜ Still open (lower priority): audit the remaining `repeat: Infinity` sites for
+  opacity/color/filter loops in *ambient* surfaces (WeeklyDigest, LoanNegotiation,
+  IncomingOfferNegotiation). **Leave the spectacle** (pack opening, walkouts,
+  goal celebrations) — those are user-initiated and momentary.
 
 ### P3-5 🟡 PARTIAL — Desktop input affordances & copy
 - ✅ Keyboard-shortcut **discoverability**: DesktopNav main tabs now carry
