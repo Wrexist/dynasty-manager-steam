@@ -206,13 +206,23 @@ The architecture is strong but coverage is thin in a few high-complexity,
 state-corrupting paths. On desktop a crash = lost unsaved progress, so this
 matters more for Steam. Prioritised by blast radius.
 
-- 🟠 M — **`seasonEnd.ts`** (1,732 LOC, ~32 lines of tests): promotion/relegation
+- ⬜ 🟠 M — **`seasonEnd.ts`** (1,732 LOC, ~32 lines of tests): promotion/relegation
   cascade per tier, continental qualification allocation, aging + contract churn +
-  replacement generation, Ballon d'Or placement/value boosts. Highest-value target.
-- 🟠 S — **`coreSlice.ts`** and **`cupSlice.ts`** (0 tests): navigation/match-lock/
-  unemployed redirects; cup tie/round/winner logic.
-- 🟠 S — **`playerEconomics.ts`** (0 tests): value/wage recompute with age + rarity +
-  Ballon-d'Or premiums — transfer-market integrity.
+  replacement generation, Ballon d'Or placement/value boosts. **Highest-value
+  target still open** — a dedicated multi-hour effort (~100+ tests), best done
+  focused rather than squeezed in.
+- ✅ **`coreSlice.ts`** — `coreSlice.test.ts` (13 tests): setScreen navigation +
+  previousScreen, match-lock (blocks disallowed targets, allows match-review),
+  unemployed-career redirect (+ retired exemption), selectPlayer/selectClub,
+  messages, settings merge + save-gating.
+- ❌ **`cupSlice.ts`** — no tests needed: it's **state-only** (initial values, no
+  actions/logic). The real cup logic lives in `data/cup.ts`, already covered by
+  `cup.test.ts`, `seasonCupProgression.test.ts`, `leagueCupBracket.test.ts`,
+  `competitionCalendar.test.ts`. Audit mis-attributed the logic to the slice.
+- ✅ **`playerEconomics.ts`** — `playerEconomics.test.ts` (11 tests): age-multiplier
+  bands + inclusive bounds, Ballon-d'Or premium compounding + top-N gating, and
+  recompute relationships (prime > veteran, higher OVR > lower, decorated >
+  plain, value-only leaves wage untouched). Math.random pinned for determinism.
 - 🟡 S — **continental qualification** util path: empty/invalid qualifier lists
   (soft-lock risk), coefficient roll-over.
 - 🟡 S — **`monetizationSlice.ts`**: bundle expansion grants all 4 included products;
