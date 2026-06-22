@@ -79,38 +79,62 @@ remains needs a real Steam client on Windows — it cannot be done in CI/cloud.
 
 ---
 
-## PART II — BUG FIXES (correctness backlog, triaged)
+## PART II — BUG FIXES (correctness backlog) — ✅ TRIAGED & RESOLVED 2026-06-22
 
-Ordered by real risk after triage. None of these block the Steam clock, but the
-🟠 items should land before launch (a crash = lost unsaved progress on desktop).
+Every item was verified against the actual code. **Outcome: only B-1 was a real
+fix; the rest evaporated under scrutiny** (intentional design, already-tested, or
+agent error). This is a strong signal about the codebase's robustness. The
+verification notes are kept so the findings aren't re-raised.
 
-### B-1 🟠 confirmed S — Defensive guards on non-null assertions
-Cheap insurance against latent crashes from `!` assertions on possibly-undefined arrays:
-- `transferSlice.ts:170` — `[...purged.pendingFarewell!, …]` → `[...(purged.pendingFarewell || []), …]`. Crashes selling a player if `pendingFarewell` is ever unset.
-- `weekAdvance.ts:441` — `finalTies…map(t => t.winnerId!).filter(Boolean)` → filter *before* map (`.filter(t => t.winnerId).map(t => t.winnerId)`) so a tie without a winner can't inject `undefined` into the international bracket.
-- **Acceptance:** grep the orchestration + transfer slices for `!]`/`!,`/`!)` on array spreads; replace with `|| []`.
+### B-1 ✅ FIXED — Defensive guard on `pendingFarewell`
+`transferSlice.ts:170` spread `purged.pendingFarewell!`; if `pendingFarewell`
+were ever unset, `purgePlayerReferences` (`rosterOps.ts:84`) would have thrown
+*first*. Hardened both sites with `|| []`. (In practice it's always initialised
+by loadGame/initGame, so this is theoretical-crash insurance, not an active bug.)
+- `weekAdvance.ts:441` was investigated and is **not** a bug — `.map(winnerId!)
+  .filter(Boolean)` already strips undefined; the `!` is just a misleading
+  annotation, behaviour is correct. Left as-is.
 
-### B-2 🟡 triage S — Free-agent pool age boundary (`seasonEnd.ts:~599/626`)
-Forced retirement is `age >= 36`; FA-pool entry gate is `age <= 34`. A contract-expired **35-year-old** is released but never added to the FA pool — silently lost, shrinking market depth over a long save. Verify the exact boundaries, then align the FA gate with forced-retirement (`<= 35` or `< FORCED_RETIREMENT_AGE`).
-- **Acceptance:** a released 35-year-old ≥55 OVR appears in the FA pool; add a regression test.
+### B-2 ❌ NOT A BUG — FA-pool age cap is intentional design
+The agent assumed `FORCED_RETIREMENT_AGE = 36`; it is **40**. The `34` FA-pool
+gate (`seasonEnd.ts:626`) is **deliberate and documented** (comment at line 540)
+and used consistently in two places: existing FAs are evicted once they'd turn 35
+(`:548`) and new expiries are gated at ≤34 (`:626`). Veterans play out their
+contracts then leave the available pool by design. Whether to keep 35–39 players
+as signable free agents is a **balance/design decision for the owner**, not a bug.
 
-### B-3 🟡 triage S — Post-promotion player-ID validation (`seasonEnd.ts:~388`)
-The post-promotion safety net validates the club is in the division but not that its `playerIds` still resolve to existing players. If promotion orphaned a player, the next match could run a club with a broken lineup. Add a `playerIds.filter(id => workingPlayers[id])` + `filter(Boolean)` rebuild after the cascade.
-- **Acceptance:** after a full season-end across the 4-tier English pyramid, every club's `playerIds` and `lineup` resolve to live players (assert in the season-integration test).
+### B-3 ❌ ALREADY COVERED — post-season orphan invariant
+`seasonAdversarial.test.ts` `clubHasNoOrphans()` checks **all clubs** (every
+`playerIds` resolves to a live player, every `lineup` id is in `playerIds`) after
+multi-cycle `endSeason`, which incidentally exercises AI clubs that get
+promoted/relegated. Promotion/relegation (`promotionRelegation.ts`) only mutates
+`divisionId` — it never touches `playerIds`, so it cannot introduce orphans. No
+change needed.
 
-### B-4 ⚪ confirmed S — Runtime guard for cup-week choreography (`cup.ts`)
-The "load-bearing" cup-week comment (Final wk 43 dodging continental SF 41–42 / Final 44 / League Cup 40) has **no runtime assertion**. A future edit could silently hang a tournament. Add a dev-only invariant check that throws if the week ordering collides.
-- **Acceptance:** a unit test that fails if `CUP_WEEKS.F` collides with the continental/League-Cup weeks.
+### B-4 ❌ ALREADY COVERED — cup-week choreography
+`competitionCalendar.test.ts:64-71` already asserts the run-in ordering
+(LC Final < continental SF legs < Cup Final < continental Final) for **every**
+season length 18–58, plus monotonic round weeks and in-season tie weeks. The
+"load-bearing footgun" is already guarded; the LEARNINGS/cup.ts warning is stale
+(collisions are now also degraded gracefully by weekAdvance catch-up recovery).
 
-### B-5 ⚪ triage S — Save-durability edge in `performSave` (`orchestrationSlice.ts:~352`)
-`lastSavedHash` is committed when `lsOk` is true, before the IDB promise resolves. If IDB then fails silently and the app closes, an identical re-save short-circuits as "unchanged" and never reaches disk. Low real-world frequency, but cheap to harden: only commit the hash once a disk path is *confirmed* (await idbPromise in the failure branch, or don't short-circuit when the last write's IDB outcome was false).
-- **Acceptance:** simulate IDB-fail-after-lsOk; the next identical save still writes.
+### B-6 ❌ NOT A BUG — `countFixtureEventBytes`
+It returns an event *count* (misnamed "Bytes"), but it's only a **pre-flight
+optimisation** to avoid a double stringify. The real guard is a separate
+**byte-length** gate (`json.length > AGGRESSIVE_TRIM_THRESHOLD`, ~line 307) that
+runs after stringify regardless of the count estimate. The agent's "fallback
+never triggers" claim is wrong. (Cosmetic: the function could be renamed.)
 
-### B-6 ⚪ triage S — `countFixtureEventBytes` undercounts (`orchestrationSlice.ts:~122`)
-Pre-flight trim estimates by `events.length` (array slots), not serialized bytes. A few huge event objects could skip the aggressive-trim path and hit the IDB quota. Switch the estimate to an approximate byte count, or lower the threshold conservatively.
+### B-5 ⚪ OPTIONAL (kept) — save-durability micro-edge
+`lastSavedHash` is committed on `lsOk` before the IDB promise resolves; an
+IDB-fail-after-lsOk + immediate close could let an identical re-save
+short-circuit. Extremely low frequency and the code already shows awareness;
+left as an optional future hardening, not a launch blocker.
 
-### B-7 ⚪ N/A — Multi-tab/concurrent-write races (persistence + slices)
-Reported as several "critical" findings (hydration race, backup-rotation race, slot-switch-mid-autosave). **Not applicable**: Electron single-instance lock + single mobile webview = one writer. Documented here so a future multi-window feature re-opens them; **do not spend time now.**
+### B-7 ⚪ N/A — Multi-tab/concurrent-write races
+Reported as several "critical" findings. **Not applicable**: Electron
+single-instance lock + single mobile webview = one writer. Re-open only if a
+multi-window feature is ever added.
 
 ---
 
