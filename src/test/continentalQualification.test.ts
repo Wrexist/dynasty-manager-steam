@@ -62,12 +62,12 @@ describe('continental qualification — fields', () => {
     for (const id of sh) {
       expect(co.has(id), `${id} double-qualified Shield+Conference`).toBe(false);
     }
-    // Each field is at most a full bracket and large enough that the draw's
-    // placeholder padding is minimal (documents the observed 32/31/30 split).
+    // All three fields now backfill to a full 32 with REAL clubs (no
+    // placeholder padding), with no duplicates.
     for (const q of [champions, shield, conference]) {
-      expect(q.qualifiers.length).toBeGreaterThan(CONTINENTAL_TOTAL_TEAMS - 4);
-      expect(q.qualifiers.length).toBeLessThanOrEqual(CONTINENTAL_TOTAL_TEAMS);
+      expect(q.qualifiers.length).toBe(CONTINENTAL_TOTAL_TEAMS);
       expect(new Set(q.qualifiers).size).toBe(q.qualifiers.length);
+      expect(q.qualifiers.some(id => id.startsWith('placeholder-'))).toBe(false);
     }
   });
 

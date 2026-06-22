@@ -226,10 +226,12 @@ matters more for Steam. Prioritised by blast radius.
   disjoint, the guaranteed cup-winner spot lands, and `generateContinentalDraw`
   always builds a valid 8×4 / 32-team structure — **even from an empty qualifier
   list** (the audit's soft-lock fear is disproven; the draw pads safely).
-  **Minor finding:** Shield/Conference fields come up 31/30 (their per-league
-  spot allocations sum below 32), so each always carries 1–2 placeholder
-  "Qualifier N" clubs. Not a soft-lock, just a polish nit — real qualifiers
-  would be nicer than placeholders. Low priority.
+  **Quality fix landed:** Shield/Conference fields used to come up 31/30 (their
+  per-league spot allocations sum below 32), leaving 1–2 generic "Qualifier N"
+  placeholder clubs in those cups every season. `collectQualifiers` now
+  backfills short fields with **real clubs** (strongest leagues first), so all
+  three competitions field 32 real teams. The `generateContinentalDraw`
+  placeholder pad remains as a defensive net but no longer fires in practice.
 - 🟡 S — **`monetizationSlice.ts`**: bundle expansion grants all 4 included products;
   starter-kit dismissal persistence. (Invariants already clean — these are
   regression guards.)

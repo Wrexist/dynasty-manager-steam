@@ -145,6 +145,36 @@ function collectQualifiers(
     if (qualifiers.length >= totalTeams) break;
   }
 
+  // Backfill to a full field with REAL clubs (strongest leagues first) rather
+  // than letting generateContinentalDraw pad the remainder with generic
+  // "Qualifier N" placeholders. The Shield/Conference per-league spot
+  // allocations sum slightly below the 32-team target, which previously left
+  // 1-2 placeholder clubs in those two competitions every season. Pulls the
+  // next available club from each league in rank order, skipping anything
+  // already qualified (here or in a higher competition).
+  if (qualifiers.length < totalTeams) {
+    for (const ranking of rankings) {
+      if (qualifiers.length >= totalTeams) break;
+      if (ranking.leagueId === playerLeagueId) {
+        const lg = ALL_LEAGUES.find(l => l.id === playerLeagueId);
+        for (const entry of playerLeagueTable) {
+          if (qualifiers.length >= totalTeams) break;
+          if (alreadyQualified.has(entry.clubId) || qualifiers.includes(entry.clubId)) continue;
+          qualifiers.push(entry.clubId);
+          const vc = makePlayerVirtualClub(entry.clubId, playerClubs, playerLeagueId, lg?.country || '', lg?.countryCode || '');
+          if (vc) virtualClubs[entry.clubId] = vc;
+        }
+      } else {
+        for (const vc of buildVirtualClubsForLeague(ranking.leagueId)) {
+          if (qualifiers.length >= totalTeams) break;
+          if (alreadyQualified.has(vc.id) || qualifiers.includes(vc.id)) continue;
+          qualifiers.push(vc.id);
+          virtualClubs[vc.id] = vc;
+        }
+      }
+    }
+  }
+
   // Cap at target
   while (qualifiers.length > totalTeams) qualifiers.pop();
 
