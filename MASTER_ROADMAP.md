@@ -237,6 +237,11 @@ matters more for Steam. Prioritised by blast radius.
   backfills short fields with **real clubs** (strongest leagues first), so all
   three competitions field 32 real teams. The `generateContinentalDraw`
   placeholder pad remains as a defensive net but no longer fires in practice.
+- ✅ **`autoSelectNationalSquad`** — `autoSelectNationalSquad.test.ts` (9): the AI
+  23-man national-team picker. Pins squad-size cap + no duplicates, position
+  minimums (2 GK / 5 DEF / 4 MID / 2 FWD), exclusion of injured / suspended /
+  low-fitness / under-17 players, nationality + alias filtering, and best-player
+  priority. (nationalTeamFlow tested the slice flow but not the picker itself.)
 - 🟡 S — **`monetizationSlice.ts`**: bundle expansion grants all 4 included products;
   starter-kit dismissal persistence. (Invariants already clean — these are
   regression guards.)
