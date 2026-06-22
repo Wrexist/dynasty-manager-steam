@@ -221,8 +221,15 @@ matters more for Steam. Prioritised by blast radius.
   bands + inclusive bounds, Ballon-d'Or premium compounding + top-N gating, and
   recompute relationships (prime > veteran, higher OVR > lower, decorated >
   plain, value-only leaves wage untouched). Math.random pinned for determinism.
-- 🟡 S — **continental qualification** util path: empty/invalid qualifier lists
-  (soft-lock risk), coefficient roll-over.
+- ✅ 🟡 **continental qualification** — `continentalQualification.test.ts` (5):
+  Champions field fills to exactly 32 with no dupes, the three fields are
+  disjoint, the guaranteed cup-winner spot lands, and `generateContinentalDraw`
+  always builds a valid 8×4 / 32-team structure — **even from an empty qualifier
+  list** (the audit's soft-lock fear is disproven; the draw pads safely).
+  **Minor finding:** Shield/Conference fields come up 31/30 (their per-league
+  spot allocations sum below 32), so each always carries 1–2 placeholder
+  "Qualifier N" clubs. Not a soft-lock, just a polish nit — real qualifiers
+  would be nicer than placeholders. Low priority.
 - 🟡 S — **`monetizationSlice.ts`**: bundle expansion grants all 4 included products;
   starter-kit dismissal persistence. (Invariants already clean — these are
   regression guards.)
