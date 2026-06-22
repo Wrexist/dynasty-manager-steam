@@ -169,15 +169,16 @@ The biggest review risk per `STEAM_PORT.md`. Current `lg:` breakpoints (1024px) 
 - ✅ New `useReducedMotionPref()` hook ORs three signals: OS `prefers-reduced-
   motion`, in-game **Reduced Motion**, and **Performance Mode**. (framer's
   MotionConfig only stops transform/layout loops, not opacity/color/filter.) Tested.
-- ✅ Gated the ambient **opacity/color** loops framer misses: TalentTree
-  available-perk pulse ring (opacity), TransferNegotiation "Negotiating…"
-  ring (borderColor) + dots (opacity) → static under reduced motion.
+- ✅ Gated the ambient **opacity/color** loops framer misses across the whole
+  negotiation-modal family + talent tree: TalentTree available-perk pulse ring
+  (opacity); Transfer / Loan / IncomingOffer "Negotiating…" ring (borderColor) +
+  dots (opacity) → static under reduced motion.
 - ℹ️ TournamentHeader's winner pulse is **scale-only** → already handled by
   framer; no change needed.
-- ⬜ Still open (lower priority): audit the remaining `repeat: Infinity` sites for
-  opacity/color/filter loops in *ambient* surfaces (WeeklyDigest, LoanNegotiation,
-  IncomingOfferNegotiation). **Leave the spectacle** (pack opening, walkouts,
-  goal celebrations) — those are user-initiated and momentary.
+- ⬜ Still open (lower priority): sweep the remaining `repeat: Infinity` sites for
+  opacity/color/filter loops in other *ambient* surfaces (e.g. WeeklyDigest).
+  **Leave the spectacle** (pack opening, walkouts, goal celebrations) — those are
+  user-initiated and momentary.
 
 ### P3-5 🟡 PARTIAL — Desktop input affordances & copy
 - ✅ Keyboard-shortcut **discoverability**: DesktopNav main tabs now carry
