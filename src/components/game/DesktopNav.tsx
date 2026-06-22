@@ -97,7 +97,7 @@ export function DesktopNav() {
     return null;
   };
 
-  const NavButton = ({ tab, compact, layoutId }: { tab: Tab; compact?: boolean; layoutId: string }) => {
+  const NavButton = ({ tab, compact, layoutId, shortcut }: { tab: Tab; compact?: boolean; layoutId: string; shortcut?: number }) => {
     const active = tab.group ? tab.group.includes(currentScreen) : currentScreen === tab.screen;
     const Icon = tab.icon;
     const badge = badgeFor(tab.screen);
@@ -107,8 +107,13 @@ export function DesktopNav() {
         onClick={() => { if (matchLocked) return; hapticLight(); setScreen(tab.screen); }}
         aria-current={active ? 'page' : undefined}
         aria-disabled={matchLocked || undefined}
+        // Desktop number-key shortcut (see useDesktopNavShortcuts): surface it on
+        // hover + to assistive tech so the keyboard nav is discoverable.
+        title={shortcut ? `${tab.label} (press ${shortcut})` : undefined}
+        aria-keyshortcuts={shortcut ? String(shortcut) : undefined}
         className={cn(
           'relative flex items-center gap-2 px-3.5 h-9 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
+          'outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           matchLocked ? 'opacity-50 cursor-not-allowed pointer-events-none'
             : active ? 'text-primary-foreground' : 'text-foreground/70 hover:text-foreground hover:bg-foreground/[0.06] cursor-pointer',
         )}
@@ -147,8 +152,9 @@ export function DesktopNav() {
       aria-label="Primary"
     >
       <div className="mx-auto w-full max-w-[110rem] px-6 lg:px-8 flex items-center gap-1 h-12">
-        {/* Main sections */}
-        {activeTabs.map(tab => <NavButton key={tab.screen} tab={tab} layoutId="desktop-nav-pill" />)}
+        {/* Main sections — index drives the number-key shortcut hint (1..N),
+            matching useDesktopNavShortcuts which keys off the same tab order. */}
+        {activeTabs.map((tab, i) => <NavButton key={tab.screen} tab={tab} layoutId="desktop-nav-pill" shortcut={i + 1} />)}
 
         {/* Contextual sub-tabs for the active group */}
         {subTabs && (

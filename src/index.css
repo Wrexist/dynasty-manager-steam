@@ -555,3 +555,16 @@ input[type="range"]:not(.age-slider)::-webkit-slider-thumb {
 .desktop ::-webkit-scrollbar-corner {
   background: transparent;
 }
+/* On desktop, don't fully hide scroll affordance for `.scrollbar-hide` regions
+   (horizontal card strips, tab rows, scrollable sheets). A mouse user can't
+   swipe, so a hidden scrollbar makes scrollable content look truncated. Show a
+   slim themed scrollbar instead — the thumb/track styling above applies
+   automatically. Mobile/web keep them hidden (touch users swipe). */
+.desktop .scrollbar-hide {
+  scrollbar-width: thin;
+}
+.desktop .scrollbar-hide::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+  height: 6px;
+}

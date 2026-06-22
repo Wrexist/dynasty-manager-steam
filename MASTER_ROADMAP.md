@@ -142,8 +142,11 @@ multi-window feature is ever added.
 
 A premium Steam release is judged on desktop feel. Grouped by impact; most are S.
 
-### P3-1 🟠 S — Scrollbars on desktop
-`scrollbar-hide` is used ~11× (Tactics, Squad, Calendar, Packs, WeeklyDigest…). On desktop this hides the scroll affordance — mouse users think content is stuck. Gate `scrollbar-hide` behind `:not(.desktop)` or a desktop-aware utility; keep themed scrollbars visible.
+### P3-1 ✅ DONE — Scrollbars on desktop
+`.desktop .scrollbar-hide` now restores a slim themed 6px scrollbar (overriding
+the `display:none`), so mouse users see scroll affordance on horizontal strips
+and scrollable sheets. Mobile/web keep them hidden (touch users swipe).
+`index.css` only — no component changes.
 
 ### P3-2 🟠 M — Responsive density (the "phone-in-a-window" smell)
 The biggest review risk per `STEAM_PORT.md`. Current `lg:` breakpoints (1024px) leave 1280–3440px viewports under-using space:
@@ -152,20 +155,32 @@ The biggest review risk per `STEAM_PORT.md`. Current `lg:` breakpoints (1024px) 
 - PlayerDetail radar chart, MatchReview MOTM card → scale up on large screens.
 - Calendar → week-grid columns instead of a single scroll column.
 
-### P3-3 🟠 M — Accessibility pass
-- Add `aria-describedby` to the 10+ Radix dialogs (FinanceBreakdownSheet, celebration/achievement modals, …). (WCAG 1.3.1)
-- `aria-label` on `role="button"` rows (LeagueTable, Dashboard) describing the action ("Open Arsenal details").
-- `aria-expanded` on MoreDrawer toggle; visible `:focus-visible` ring on DesktopNav buttons (the new number-key nav has no visible focus today).
-- MatchDay commentary: per-event `aria-label` ("Haaland scores 67'") under the existing `aria-live` region.
+### P3-3 🟡 PARTIAL — Accessibility pass
+- ✅ Visible `:focus-visible` ring on DesktopNav buttons (keyboard focus was invisible).
+- ❌ `aria-expanded` on MoreDrawer toggle — false positive; Radix `SheetTrigger`
+  already provides it via `asChild`.
+- ⬜ Still open: `aria-describedby` on the Radix dialogs; `aria-label` on
+  `role="button"` rows (LeagueTable, Dashboard); per-event MatchDay commentary
+  labels under the existing `aria-live` region.
 
-### P3-4 🟡 S — Reduced-motion compliance
-Infinite opacity/filter loops ignore `prefers-reduced-motion`: TransferNegotiation pulse rings, TalentTree, pack pity pulse, WeeklyDigest. Wrap each loop in `useReducedMotion()`. (Perf-mode already strips some, but OS motion-reduction should too.)
+### P3-4 🟡 DEFERRED (needs visual verification) — Reduced-motion compliance
+~55 `repeat: Infinity` loops across 22 files; framer's `reducedMotion` doesn't
+stop opacity/filter loops. **But most are user-initiated spectacle** (pack
+opening, walkouts, celebrations) that are risky to alter blindly and can't be
+visually verified in CI. The in-game `settings.reducedMotion` toggle already
+gives users a global escape hatch (MotionConfig `"always"`). When tackled, scope
+to **ambient persistent loops only** (negotiation rings, TalentTree, WeeklyDigest,
+TournamentHeader) via a combined hook (framer `useReducedMotion()` + the in-game
+setting), and verify each visually. Don't touch the spectacle animations.
 
-### P3-5 🟡 S — Desktop input affordances & copy
-- Keyboard shortcut **discoverability**: the new number-key tab nav (1–9) has zero on-screen hint. Add a small legend (Settings → Help, or a first-desktop-launch hint).
-- `Space`/`Enter` to advance match / continue / "Advance Week"; `+`/`-` or `S` to cycle match speed.
-- Tap→Click copy: "Tap to lift trophy" etc. should be context-aware on desktop.
-- Clear **Paused** match indicator (icon + `role="status"`), not just a text label.
+### P3-5 🟡 PARTIAL — Desktop input affordances & copy
+- ✅ Keyboard-shortcut **discoverability**: DesktopNav main tabs now carry
+  `aria-keyshortcuts` + a hover `title` ("Squad (press 2)"), matching the
+  number-key nav. Order verified against `MAIN_TABS`/`WC_MAIN_TABS`/`UNEMPLOYED_MAIN_TABS`.
+- ❌ Tap→Click copy: **intentionally skipped** — Steam Deck is touch-capable, so
+  "Tap" is valid for a large share of Steam users; "Click" could be *worse*.
+- ⬜ Still open: `Space`/`Enter` to advance match / "Advance Week"; speed-cycle
+  keys; clearer **Paused** indicator (icon + `role="status"`).
 
 ### P3-6 🟡 M — Desktop hover/interaction (P3)
 - Bench hover popover (larger preview + quick stats).
