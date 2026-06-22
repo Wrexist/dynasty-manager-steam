@@ -38,12 +38,10 @@ needs a 10-min check before fixing), or `N/A` (investigated, not a real risk).
 This is the only part that gates a launch date. Everything else is quality/depth
 that can land before or after release.
 
-### Phase A — Steam Direct & store (👤, START NOW) 🔴
-The **30-day Steam Direct clock** is the single longest pole and is 100%
-non-code. Nothing here is blocked by engineering.
-- 👤 ⬜ **Pay Steam Direct** ($100) + identity/tax/bank verification. Pay ≥5 weeks
-  before any target launch. **Do this today** — the clock runs in parallel with
-  all code work below.
+### Phase A — Steam Direct & store (👤) 🔴
+- ✅ **Steam partner account is paid/active** (owner confirmed 2026-06-22). Steam
+  Direct is handled — the 30-day clock is no longer the blocker. Create the App
+  in Steamworks to get the real AppID (used by Phase B).
 - 👤 ⬜ Store page assets from the *fixed* marketing art, resized to Steam specs
   (header 460×215, capsule 616×353, library 600×900, screenshots 1920×1080).
 - 👤 ⬜ Gameplay trailer captured from the desktop build (match → transfer → trophy).
@@ -51,19 +49,19 @@ non-code. Nothing here is blocked by engineering.
 - **Gate:** App Store marketing thread closed before building the Steam page.
 
 ### Phase B — Steamworks on-device verification (👤 + hardware) 🔴 M
-The bridge code is written and unit-tested (commit landed this session). What
-remains needs a real Steam client on Windows — it cannot be done in CI/cloud.
-- 👤 ⬜ **De-risk spike** on AppID **480**: `npm install steamworks.js`, drop
-  `steam_appid.txt` (=480), launch, confirm (a) init, (b) one achievement
-  unlocks, (c) overlay (Shift+Tab) renders **non-white**.
-- 👤 ⬜ Verify the `steamworks.js` API names in `electron/steam.cjs`
-  (`client.achievement.activate`, `electronEnableSteamOverlay`) match the
-  installed version — calls are wrapped to no-op if wrong, so this is confirm-only.
-- 👤 ⬜ Dashboard: create achievements with the API names from
-  `steamAchievementApiNames()` (`FIRST_WIN`, `LEAGUE_CHAMPION`, …).
-- 👤 ⬜ Dashboard: configure **Auto-Cloud** to sync `userData/steamcloud/slot*.sav`.
-- ⬜ **Then enable** the deferred save-conflict resolution (see Phase D-3) once a
-  two-machine test confirms timestamps behave.
+The bridge code is written and unit-tested. What remains needs a real Steam
+client on Windows — it cannot be done in CI/cloud. **Full step-by-step is in
+`STEAM_SETUP.md`** (install, spike, the 38-achievement dashboard table with
+hidden flags, Auto-Cloud path config, packaging, troubleshooting).
+- 👤 ⬜ Spike: `npm install steamworks.js`, `steam_appid.txt` (your AppID or 480),
+  launch, confirm (a) init, (b) one achievement unlocks, (c) overlay (Shift+Tab)
+  renders **non-white**.
+- 👤 ⬜ Confirm the `steamworks.js` API names in `electron/steam.cjs` match the
+  installed version (calls no-op if wrong — confirm-only).
+- 👤 ⬜ Dashboard: create the 38 achievements (table in `STEAM_SETUP.md` §3) +
+  configure Auto-Cloud (`STEAM_SETUP.md` §4).
+- ⬜ **Then enable** the deferred save-conflict resolution once a two-machine test
+  confirms timestamps behave.
 
 ### Phase C — Packaging & ship 🟠 M
 - ⬜ `electron-builder`: add `asarUnpack` for the `steamworks.js` native `.node`
