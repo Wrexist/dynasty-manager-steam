@@ -155,13 +155,17 @@ The biggest review risk per `STEAM_PORT.md`. Current `lg:` breakpoints (1024px) 
 - PlayerDetail radar chart, MatchReview MOTM card → scale up on large screens.
 - Calendar → week-grid columns instead of a single scroll column.
 
-### P3-3 🟡 PARTIAL — Accessibility pass
+### P3-3 🟡 MOSTLY DONE — Accessibility pass
 - ✅ Visible `:focus-visible` ring on DesktopNav buttons (keyboard focus was invisible).
+- ✅ Interactive `role="button"` rows: audited LeagueTable (7), BenchStrip,
+  LineupPlayerTile, StadiumView, ManagerCreation (3) — **all already had
+  descriptive `aria-label`s + keyboard handlers** (audit B2 over-reported). The
+  one genuine gap, Dashboard's injured-player row, now has an `aria-label`
+  ("View … (injured)") + focus-visible style.
 - ❌ `aria-expanded` on MoreDrawer toggle — false positive; Radix `SheetTrigger`
   already provides it via `asChild`.
-- ⬜ Still open: `aria-describedby` on the Radix dialogs; `aria-label` on
-  `role="button"` rows (LeagueTable, Dashboard); per-event MatchDay commentary
-  labels under the existing `aria-live` region.
+- ⬜ Still open: `aria-describedby` on the Radix dialogs; per-event MatchDay
+  commentary labels under the existing `aria-live` region.
 
 ### P3-4 🟡 DEFERRED (needs visual verification) — Reduced-motion compliance
 ~55 `repeat: Infinity` loops across 22 files; framer's `reducedMotion` doesn't
