@@ -242,9 +242,15 @@ matters more for Steam. Prioritised by blast radius.
   minimums (2 GK / 5 DEF / 4 MID / 2 FWD), exclusion of injured / suspended /
   low-fitness / under-17 players, nationality + alias filtering, and best-player
   priority. (nationalTeamFlow tested the slice flow but not the picker itself.)
-- 🟡 S — **`monetizationSlice.ts`**: bundle expansion grants all 4 included products;
-  starter-kit dismissal persistence. (Invariants already clean — these are
-  regression guards.)
+- ✅ **`monetizationSlice.ts`** — `monetizationSlice.test.ts` (11): the entitlement
+  WRITE path. Guards bundle expansion, the "subs/consumables never persisted as
+  entitlements" invariant on both grant + restore, no-dupe grants, the free-trial
+  anti-restart guard, cosmetic-ownership gating, and the per-season ad-reward
+  limit + reset. (No bug — invariants hold; these lock them in.)
+- ✅ **`sponsorSlice.ts`** — `sponsorSlice.test.ts` (10): the money-touching
+  actions — accept (with occupied/expired/cooldown rejections), reject,
+  terminate (buyout deduction + the unaffordable-buyout refusal that prevents a
+  negative budget), and season-end bonus payout + deal expiry. (No bug found.)
 - 🟡 S — **save migration** adversarial: v62→v71 chain under missing/extra fields,
   throw-mid-migration rollback.
 - **Acceptance:** each new suite asserts state *shape* invariants (no orphan player
