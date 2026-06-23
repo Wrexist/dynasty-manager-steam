@@ -64,6 +64,7 @@ export const PENDING_NEWS: PendingRelease = {
     'Pitch realism: continuous, individual player movement.',
     'Match pitch play now flows continuously — the ball strings moves together upfield instead of resetting to the defenders every minute.',
     'Steam.',
+    'Strip purchase surfaces on the Steam build (Phase 4).',
   ],
   fixed: [],
   headline: null,
