@@ -111,6 +111,40 @@
   trigger a rejection than to fix anything). Those docs are stale artifacts;
   leave them. The real-clubs data is deliberate.
 
+## Desktop / Steam build (Electron)
+- **Platform detection:** `isDesktop()` from `@/platform/desktop` (true when
+  `window.electronAPI?.isElectron`). `isPro()` returns `true` on desktop, which
+  auto-suppresses every contextual upsell — so most "no purchase UI" comes free.
+  Dedicated purchase *surfaces* still need explicit `!isDesktop()` gates: TopBar
+  Shop button, MoreDrawer "Shop" entry, Settings Purchases section, `/subscribe`
+  route, ShopPage (self-redirects), ProUpsell (returns null).
+- **Packs on desktop:** paid tiers (gold/premium/rare/icon) have a `productId`
+  AND now an in-game-currency `price` in `config/packs.ts`. On mobile the `iap`
+  method wins in priority so `price` is never reached; on desktop
+  `PacksPage.activeMethodFor` skips `iap` (no IAP surface), so `currency` wins
+  and the budget is charged. The slice already charges `tier.price` for the
+  `currency` method — no slice change was needed.
+- **Steam bridge** lives in `electron/steam.cjs` (main process) + exposed via
+  `electron/preload.cjs` as `window.electronAPI.steam`. `steamworks.js` is a
+  **lazy, optional `require`** — absent in CI/web/this repo, so everything
+  degrades to a no-op and the app builds/runs fine. To activate: `npm install
+  steamworks.js` on the build box + a `steam_appid.txt` (480 for the public
+  test app) + `asarUnpack` the native addon. The Steam API method names are
+  **unverified against a real client** — every native call is wrapped so a
+  wrong name no-ops instead of crashing. Verify in the on-device spike.
+- **Achievements → Steam:** `utils/steamAchievements.ts` subscribes to the
+  store and mirrors new `unlockedAchievements` entries to Steam (delta + a
+  startup reconcile). Reuses the existing in-game achievement system — do NOT
+  add new event hooks. In-game id → Steam API name is `id.toUpperCase()
+  .replace(/-/g,'_')` (`steamAchievementApiNames()` lists them for the dashboard).
+- **Cloud saves = Auto-Cloud file mirror**, NOT the ISteamRemoteStorage API.
+  `writeSaveSlot` mirrors each save to `userData/steamcloud/slot*.sav` (plain
+  `fs`, no Steam dep); `restoreCloudSavesIfEmpty()` (folded into
+  `saveStorageReady`) fills empty slots on launch. **Reuses the existing save
+  format — no schema bump.** Newest-wins conflict resolution is deliberately
+  NOT implemented (no embedded wall-clock timestamp in the save; untested
+  overwrite would risk clobbering a real save) — it only fills empty slots.
+
 ## Engine / UI notes (verify before trusting magic numbers)
 - `src/engine/match.ts` (1,828 LOC) — event-based, minute-by-minute, with late
   drama mechanics after minute ~85. Don't quote specific probability constants

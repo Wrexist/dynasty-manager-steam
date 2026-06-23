@@ -7,6 +7,7 @@ import { Crown, Check, Sparkles, Package, Shield, Timer, CreditCard, ExternalLin
 import { cn } from '@/lib/utils';
 import { PRODUCTS, PRO_FEATURE_LABELS, PRO_FEATURES, STARTER_KIT, COSMETIC_ITEMS } from '@/config/monetization';
 import { isPro, hasProduct, isStarterKitAvailable, getStarterKitRemainingMs, getOwnedCosmetics, getActiveCosmetic, isSubscriptionActive } from '@/utils/monetization';
+import { isDesktop } from '@/platform/desktop';
 import type { CosmeticCategory } from '@/types/game';
 import type { ProductId, ProFeature } from '@/types/game';
 import { useNavigate } from 'react-router-dom';
@@ -85,6 +86,14 @@ const ShopPage = () => {
   // Localised store prices fetched from RevenueCat. Empty on web/dev — falls
   // back to the USD config price for display.
   const [storePrices, setStorePrices] = useState<Partial<Record<ProductId, string>>>({});
+  const setScreen = useGameStore(s => s.setScreen);
+
+  // The desktop (Steam) build has no purchase surface. All Shop entry points are
+  // already removed there, but guard the screen too in case it's reached via a
+  // deep link or stale nav state — bounce to the dashboard.
+  useEffect(() => {
+    if (isDesktop()) setScreen('dashboard');
+  }, [setScreen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -183,6 +192,9 @@ const ShopPage = () => {
       setPurchaseError('Could not open subscription management. Please visit your App Store or Play Store settings.');
     }
   };
+
+  // Render nothing on desktop while the redirect effect above bounces away.
+  if (isDesktop()) return null;
 
   return (
     <div className="mx-auto w-full max-w-[80rem] px-4 lg:px-8 py-4 space-y-5">

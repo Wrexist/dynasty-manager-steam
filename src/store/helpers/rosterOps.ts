@@ -81,7 +81,7 @@ export function purgePlayerReferences(
     scoutWatchList: state.scoutWatchList.filter(id => id !== playerId),
     negotiationStrikes,
     contractStrikes,
-    pendingFarewell: state.pendingFarewell.filter(f => f.playerId !== playerId),
+    pendingFarewell: (state.pendingFarewell || []).filter(f => f.playerId !== playerId),
     // If a transfer-talk modal is open for THIS player, dismiss it so
     // the modal isn't stuck on a ghost reference. Other players' talks
     // stay intact.

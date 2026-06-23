@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useEscapeClose } from '@/hooks/useEscapeClose';
+import { useReducedMotionPref } from '@/hooks/useReducedMotionPref';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -36,6 +37,7 @@ type Phase = 'negotiate' | 'thinking' | 'result';
 type Outcome = 'accepted' | 'rejected' | 'counter';
 
 export function TransferNegotiation({ listing, onClose }: Props) {
+  const reducedMotion = useReducedMotionPref();
   const { players, clubs, playerClubId, season, shortlist } = useGameStore(useShallow(s => ({
     players: s.players,
     clubs: s.clubs,
@@ -464,8 +466,8 @@ export function TransferNegotiation({ listing, onClose }: Props) {
               >
                 <motion.div
                   className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center"
-                  animate={{ scale: [1, 1.08, 1], borderColor: ['rgba(16,185,129,0.3)', 'rgba(16,185,129,0.6)', 'rgba(16,185,129,0.3)'] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  animate={reducedMotion ? { scale: 1 } : { scale: [1, 1.08, 1], borderColor: ['rgba(16,185,129,0.3)', 'rgba(16,185,129,0.6)', 'rgba(16,185,129,0.3)'] }}
+                  transition={reducedMotion ? { duration: 0 } : { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   <Handshake className="w-6 h-6 text-primary" />
                 </motion.div>
@@ -480,8 +482,8 @@ export function TransferNegotiation({ listing, onClose }: Props) {
                     <motion.div
                       key={i}
                       className="w-1.5 h-1.5 rounded-full bg-primary"
-                      animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-                      transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                      animate={reducedMotion ? { opacity: 0.7, scale: 1 } : { opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                      transition={reducedMotion ? { duration: 0 } : { duration: 1, repeat: Infinity, delay: i * 0.2 }}
                     />
                   ))}
                 </div>

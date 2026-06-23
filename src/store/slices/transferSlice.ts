@@ -167,7 +167,7 @@ const executeSale = (state: GameState, offer: { id: string; playerId: string; bu
     ...purged,
     transferMarket: newMarket,
     seasonTransfersSold: [...currentSold, { playerName: `${player.firstName} ${player.lastName}`, fee }],
-    ...(farewellEntry ? { pendingFarewell: [...purged.pendingFarewell!, farewellEntry] } : {}),
+    ...(farewellEntry ? { pendingFarewell: [...(purged.pendingFarewell || []), farewellEntry] } : {}),
     ...merchDipUpdate,
   });
   return { success: true, message: `${player.firstName} ${player.lastName} sold for £${(fee / 1e6).toFixed(1)}M!${sellOnNote}` };

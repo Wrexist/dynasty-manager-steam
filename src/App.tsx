@@ -2,7 +2,8 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { isDesktop } from "@/platform/desktop";
 import { MotionConfig } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -101,7 +102,7 @@ const App = () => {
               />
               <Route
                 path="/subscribe"
-                element={<ErrorBoundary scope="subscribe"><SubscribeOnboarding /></ErrorBoundary>}
+                element={isDesktop() ? <Navigate to="/" replace /> : <ErrorBoundary scope="subscribe"><SubscribeOnboarding /></ErrorBoundary>}
               />
               <Route
                 path="/game"

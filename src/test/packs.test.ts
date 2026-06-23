@@ -106,11 +106,11 @@ describe('Pack opening — openPack action', () => {
   // gets a clean slate with no extra work.
   beforeEach(() => { initAndGetState(); });
 
-  it('rejects currency-method opens for tiers that no longer support in-game purchase', () => {
-    // Every tier is now either daily-free, ad-supported, or IAP-only.
-    // No tier supports the legacy currency method, so explicitly asking
-    // for it on any tier should be politely refused — not silently
-    // fall through and grant a free pack.
+  it('allows currency-method opens for paid tiers — the desktop in-game-budget fallback', () => {
+    // On the desktop (Steam) build the paid tiers have no IAP surface and fall
+    // back to their in-game currency price (config `price`). The slice honours
+    // an explicit `currency` method for these tiers, charging club budget.
+    // Mobile never reaches this path — the IAP method wins in priority there.
     const state = useGameStore.getState();
     useGameStore.setState({
       clubs: {
@@ -118,9 +118,24 @@ describe('Pack opening — openPack action', () => {
         [state.playerClubId]: { ...state.clubs[state.playerClubId], budget: 200_000_000 },
       },
     });
+    const budgetBefore = useGameStore.getState().clubs[state.playerClubId].budget;
+    const result = useGameStore.getState().openPack('rare', { method: 'currency' });
+    expect(result.success).toBe(true);
+    expect(useGameStore.getState().clubs[state.playerClubId].budget)
+      .toBe(budgetBefore - PACK_TIER_MAP.rare.price);
+  });
+
+  it('rejects currency-method opens when the club cannot afford the pack', () => {
+    const state = useGameStore.getState();
+    useGameStore.setState({
+      clubs: {
+        ...state.clubs,
+        [state.playerClubId]: { ...state.clubs[state.playerClubId], budget: 100 },
+      },
+    });
     const result = useGameStore.getState().openPack('rare', { method: 'currency' });
     expect(result.success).toBe(false);
-    expect(result.message).toMatch(/in-game money/i);
+    expect(result.message).toMatch(/insufficient funds/i);
   });
 
   it('rejects when squad cap would be exceeded', () => {

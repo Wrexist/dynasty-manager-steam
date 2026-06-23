@@ -15,8 +15,17 @@ interface ElectronAPI {
     isAvailable: () => boolean;
     unlockAchievement: (id: string) => Promise<boolean>;
     cloudSave: (slot: number, blob: string) => Promise<boolean>;
-    cloudLoad: (slot: number) => Promise<string | null>;
+    cloudLoad: (slot: number) => Promise<CloudSaveEnvelope | null>;
   };
+}
+
+/** Shape returned by the Auto-Cloud save mirror (see electron/steam.cjs). */
+export interface CloudSaveEnvelope {
+  /** Wall-clock epoch ms when the cloud mirror was written. 0 for a legacy
+   *  raw-payload file with no envelope. */
+  savedAt: number;
+  /** The serialized save-slot JSON (same format as `readSaveSlot`). */
+  payload: string;
 }
 
 declare global {

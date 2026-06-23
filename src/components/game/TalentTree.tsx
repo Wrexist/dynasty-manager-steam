@@ -5,6 +5,7 @@ import { DynamicIcon } from '@/components/game/DynamicIcon';
 import { Button } from '@/components/ui/button';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useEscapeClose } from '@/hooks/useEscapeClose';
+import { useReducedMotionPref } from '@/hooks/useReducedMotionPref';
 import {
   TALENT_BRANCHES,
   getBranchPerks,
@@ -187,6 +188,7 @@ interface TalentNodeProps {
 }
 
 function TalentNode({ perk, progression, branchColor, isCapstone, justUnlocked, onClick }: TalentNodeProps) {
+  const reducedMotion = useReducedMotionPref();
   const isUnlocked = progression.unlockedPerks.includes(perk.id);
   const check = canUnlockPerk(perk, progression);
   const canBuy = check.canUnlock;
@@ -231,12 +233,14 @@ function TalentNode({ perk, progression, branchColor, isCapstone, justUnlocked, 
             isUnlocked && isPrestige ? 'text-amber-400' : isUnlocked ? 'text-primary' : canBuy ? 'text-blue-400' : 'text-muted-foreground/50',
           )}
         />
-        {/* Pulse ring for available perks */}
+        {/* Pulse ring for available perks. Goes to a static ring under reduced
+            motion — framer's MotionConfig stops the scale but not the opacity
+            loop, so gate it here to keep the "available" cue without pulsing. */}
         {canBuy && !isUnlocked && (
           <motion.div
             className="absolute inset-0 rounded-full border-2 border-blue-400/50"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={reducedMotion ? { scale: 1, opacity: 1 } : { scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+            transition={reducedMotion ? { duration: 0 } : { duration: 2, repeat: Infinity }}
           />
         )}
         {/* Unlock celebration burst */}
