@@ -8,9 +8,23 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useGameStore } from '@/store/gameStore';
 import { getDefaultMerchState } from '@/utils/merchandise';
-import { MERCH_CAMPAIGN_COOLDOWN_WEEKS, SIGNATURE_DROP_COOLDOWN_WEEKS } from '@/config/merchandise';
-import type { MerchSignatureDrop } from '@/types/game';
+import { MERCH_CAMPAIGN_COOLDOWN_WEEKS, SIGNATURE_DROP_COOLDOWN_WEEKS, SIGNATURE_DROP_COST } from '@/config/merchandise';
+import type { MerchSignatureDrop, Player } from '@/types/game';
 import type { GameState } from '@/store/storeTypes';
+
+/** A marketable player (appearances >= 3 → getPlayerMarketability > 0). */
+function marketablePlayer(id: string): Player {
+  return { id, firstName: 'Star', lastName: 'Player', overall: 82, goals: 10, assists: 5,
+    appearances: 12, age: 23, position: 'ST' } as unknown as Player;
+}
+function setClubBudget(budget: number) {
+  const s = useGameStore.getState();
+  useGameStore.setState({ clubs: { ...s.clubs, [s.playerClubId]: { ...s.clubs[s.playerClubId], budget } } });
+}
+function addPlayer(p: Player) {
+  const s = useGameStore.getState();
+  useGameStore.setState({ players: { ...s.players, [p.id]: p } });
+}
 
 const CLUB_ID = 'celtic';
 
@@ -104,5 +118,35 @@ describe('merchandiseSlice — cancelSignatureDrop', () => {
     const m = useGameStore.getState().merchandise;
     expect(m.signatureDrop).toBeNull();
     expect(m.signatureDropCooldownWeeks).toBe(SIGNATURE_DROP_COOLDOWN_WEEKS);
+  });
+});
+
+describe('merchandiseSlice — launchSignatureDrop money path', () => {
+  it('deducts the cost, starts the drop, and marks the player used', () => {
+    addPlayer(marketablePlayer('star1'));
+    setClubBudget(1_000_000);
+    const res = useGameStore.getState().launchSignatureDrop('star1');
+    expect(res.success).toBe(true);
+    const s = useGameStore.getState();
+    expect(s.clubs[s.playerClubId].budget).toBe(1_000_000 - SIGNATURE_DROP_COST);
+    expect(s.merchandise.signatureDrop?.playerId).toBe('star1');
+    expect(s.merchandise.signatureDropsUsedThisSeason).toContain('star1');
+  });
+
+  it('refuses (no budget change) when the club cannot afford the drop', () => {
+    addPlayer(marketablePlayer('star2'));
+    setClubBudget(SIGNATURE_DROP_COST - 1);
+    const res = useGameStore.getState().launchSignatureDrop('star2');
+    expect(res.success).toBe(false);
+    const s = useGameStore.getState();
+    expect(s.clubs[s.playerClubId].budget).toBe(SIGNATURE_DROP_COST - 1); // untouched
+    expect(s.merchandise.signatureDrop).toBeNull();
+  });
+
+  it('rejects an unmarketable player (too few appearances)', () => {
+    addPlayer({ ...marketablePlayer('benchwarmer'), appearances: 1 } as Player);
+    setClubBudget(1_000_000);
+    const res = useGameStore.getState().launchSignatureDrop('benchwarmer');
+    expect(res.success).toBe(false);
   });
 });
