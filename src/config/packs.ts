@@ -56,7 +56,7 @@ export const PACK_TIERS: PackTierDefinition[] = [
     // On mobile the `iap` method always wins in priority (productId present), so
     // this value is never reached there. Anchored below the guaranteed-OVR
     // player's market value so the gamble stays positive-EV on the floor card.
-    price: 2_500_000,
+    price: 15_000_000,
     cards: 5,
     guaranteedMinOvr: 78,
     ovrMin: 68,
@@ -74,7 +74,7 @@ export const PACK_TIERS: PackTierDefinition[] = [
     key: 'premium',
     label: 'Premium Gold',
     tagline: '5 players · 1× 82+ guaranteed · in-app purchase',
-    price: 5_000_000, // desktop currency fallback (see gold tier note)
+    price: 30_000_000, // desktop currency fallback (see gold tier note)
     cards: 5,
     guaranteedMinOvr: 82,
     ovrMin: 72,
@@ -91,7 +91,7 @@ export const PACK_TIERS: PackTierDefinition[] = [
     key: 'rare',
     label: 'Rare Gold',
     tagline: '5 players · 1× 84+ guaranteed · walkout possible · in-app purchase',
-    price: 8_000_000, // desktop currency fallback (see gold tier note)
+    price: 50_000_000, // desktop currency fallback (see gold tier note)
     cards: 5,
     guaranteedMinOvr: 84,
     ovrMin: 75,
@@ -108,7 +108,7 @@ export const PACK_TIERS: PackTierDefinition[] = [
     key: 'icon',
     label: 'Icon Pack',
     tagline: '1 player · 88+ guaranteed · walkout guaranteed · in-app purchase',
-    price: 15_000_000, // desktop currency fallback (see gold tier note)
+    price: 100_000_000, // desktop currency fallback (see gold tier note)
     cards: 1,
     guaranteedMinOvr: 88,
     ovrMin: 85,
