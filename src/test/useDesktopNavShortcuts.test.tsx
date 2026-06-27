@@ -91,6 +91,25 @@ describe('useDesktopNavShortcuts', () => {
     expect(useGameStore.getState().currentScreen).toBe('dashboard');
   });
 
+  it('quick-nav letters jump to Inbox/Table/Calendar/Settings', () => {
+    renderHook(() => useDesktopNavShortcuts());
+    press('i');
+    expect(useGameStore.getState().currentScreen).toBe('inbox');
+    press('t');
+    expect(useGameStore.getState().currentScreen).toBe('league-table');
+    press('c');
+    expect(useGameStore.getState().currentScreen).toBe('calendar');
+    press(',');
+    expect(useGameStore.getState().currentScreen).toBe('settings');
+  });
+
+  it('quick-nav letters are inert in world-cup mode', () => {
+    act(() => { useGameStore.setState({ gameMode: 'world-cup', currentScreen: 'dashboard' } as Partial<ReturnType<typeof useGameStore.getState>>); });
+    renderHook(() => useDesktopNavShortcuts());
+    press('t');
+    expect(useGameStore.getState().currentScreen).toBe('dashboard');
+  });
+
   it('Escape does not navigate while a dialog is open', () => {
     act(() => { useGameStore.setState({ currentScreen: 'finance' } as Partial<ReturnType<typeof useGameStore.getState>>); });
     renderHook(() => useDesktopNavShortcuts());

@@ -4,6 +4,7 @@ import { Keyboard, X } from 'lucide-react';
 import { useGameStore } from '@/store/gameStore';
 import { GameScreen } from '@/types/game';
 import { MAIN_TABS, WC_MAIN_TABS, UNEMPLOYED_MAIN_TABS, SCREEN_TITLES } from '@/config/navigation';
+import { QUICK_NAV_KEYS } from '@/hooks/useDesktopNavShortcuts';
 import { useCareerUnemployed } from '@/hooks/useGameSelectors';
 
 // Desktop-only keyboard-shortcuts cheatsheet. Press "?" (Shift+/) to toggle.
@@ -51,8 +52,10 @@ export function KeyboardShortcutsOverlay() {
     return () => document.removeEventListener('keydown', onKey, true);
   }, [open]);
 
+  const isWorldCup = gameMode === 'world-cup';
   const rows: { keys: string[]; label: string }[] = [
     ...tabs.map((screen, i) => ({ keys: [String(i + 1)], label: TAB_LABEL[screen] ?? SCREEN_TITLES[screen] ?? screen })),
+    ...(isWorldCup ? [] : QUICK_NAV_KEYS.map(q => ({ keys: [q.key], label: q.label }))),
     { keys: ['Esc'], label: 'Back' },
     { keys: ['?'], label: 'Toggle this help' },
   ];

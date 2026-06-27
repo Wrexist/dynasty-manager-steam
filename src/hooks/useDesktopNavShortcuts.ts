@@ -20,6 +20,17 @@ function shouldIgnoreShortcut(e: KeyboardEvent): boolean {
   return false;
 }
 
+/** Desktop quick-nav letter keys → screen. Active in club play (skipped in
+ *  world-cup mode, where those club screens don't apply). Exported so the
+ *  KeyboardShortcutsOverlay renders the same list — the help can't drift from
+ *  the bindings. */
+export const QUICK_NAV_KEYS: { key: string; screen: GameScreen; label: string }[] = [
+  { key: 'i', screen: 'inbox', label: 'Inbox' },
+  { key: 't', screen: 'league-table', label: 'Table' },
+  { key: 'c', screen: 'calendar', label: 'Calendar' },
+  { key: ',', screen: 'settings', label: 'Settings' },
+];
+
 /**
  * Desktop-only keyboard navigation. No-op on mobile/web, while a match is
  * locked, when a field is focused, or when a dialog is open.
@@ -62,6 +73,16 @@ export function useDesktopNavShortcuts(): void {
         e.preventDefault();
         setScreen(back);
         return;
+      }
+
+      // Quick-nav letters (Inbox / Table / Calendar / Settings). Club play only.
+      if (gameMode !== 'world-cup') {
+        const quick = QUICK_NAV_KEYS.find(q => q.key === e.key);
+        if (quick) {
+          e.preventDefault();
+          setScreen(quick.screen);
+          return;
+        }
       }
 
       if (e.key < '1' || e.key > '9') return;
