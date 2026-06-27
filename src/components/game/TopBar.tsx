@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useFlash } from '@/hooks/useFlash';
 import { useMatchLocked, useCareerUnemployed } from '@/hooks/useGameSelectors';
 import { XP_GLOW_MS } from '@/config/ui';
+import { isDesktop } from '@/platform/desktop';
 
 export function TopBar() {
   const {
@@ -264,14 +265,17 @@ export function TopBar() {
               className="absolute top-0.5 right-0.5"
             />
           </button>
-          <button
-            disabled={matchLocked}
-            onClick={() => { setScreen('shop'); hapticMedium(); }}
-            aria-label="Shop"
-            className="p-2 rounded-lg hover:bg-muted/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-          >
-            <Crown className="w-4 h-4 text-[hsl(var(--gold))] drop-shadow-[0_0_4px_hsl(var(--gold)/0.4)]" />
-          </button>
+          {/* Shop is hidden on the premium desktop (Steam) build — no IAP surface. */}
+          {!isDesktop() && (
+            <button
+              disabled={matchLocked}
+              onClick={() => { setScreen('shop'); hapticMedium(); }}
+              aria-label="Shop"
+              className="p-2 rounded-lg hover:bg-muted/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            >
+              <Crown className="w-4 h-4 text-[hsl(var(--gold))] drop-shadow-[0_0_4px_hsl(var(--gold)/0.4)]" />
+            </button>
+          )}
           {/* Career mode: reputation badge or XP Level */}
           {gameMode === 'career' && careerManager ? (
             <button

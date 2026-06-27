@@ -17,5 +17,7 @@
     ],
     "artifactName": "${productName}-${version}-win.${ext}"
   },
-  "_comment": "win target is 'dir' (unpacked) because Steam handles installation via SteamPipe depots — the release/win-unpacked folder is what gets uploaded. Swap to 'nsis' or 'portable' only for standalone non-Steam distribution."
+  "_comment": "win target is 'dir' (unpacked) because Steam handles installation via SteamPipe depots — the release/win-unpacked folder is what gets uploaded. Swap to 'nsis' or 'portable' only for standalone non-Steam distribution.",
+  "_todo_icon": "Add a production app/installer icon: a multi-resolution Windows .ico (256/128/64/48/32/16) at e.g. build/icon.ico, then set win.icon to it. The in-app window/taskbar icon is already set at runtime via BrowserWindow.icon (dist/icon.png). electron-builder needs a real .ico (or a >=256px png it converts) — generate from public/icon.png before the first depot upload.",
+  "_todo_steamworks": "steamworks.js is a LAZY OPTIONAL require in electron/steam.cjs. Install it on the build machine (npm install steamworks.js), then add 'asarUnpack' for the native .node addon (e.g. '**/steamworks.js/**') before packaging a Steam-enabled build — native addons cannot load from inside an asar archive."
 }

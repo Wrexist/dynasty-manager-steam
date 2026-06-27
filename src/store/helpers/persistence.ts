@@ -1,6 +1,7 @@
 import type { SlotSummary, MatchViewMode } from '@/types/game';
 import { idbGet, idbPut, idbDel, idbKeys, requestPersistentStorage } from './idbStorage';
 import { addGameBreadcrumb } from '@/utils/sentry';
+import { getElectronAPI, isDesktop } from '@/platform/desktop';
 
 /**
  * Centralised corruption breadcrumb. We don't surface these to the user
@@ -696,7 +697,61 @@ export function writeSaveSlot(slot: number, json: string): SaveWriteResult {
     lsRemoveSafe(backupKey);
   }
 
+  // Step 5 (desktop only): mirror to the Steam Auto-Cloud folder. Fire-and-
+  // forget — a cloud failure never affects the user-visible save flow, and the
+  // bridge is a no-op when Steam is unavailable.
+  mirrorSlotToCloud(slot, json);
+
   return { lsOk, idbPromise };
+}
+
+/** Push a slot's serialized save to the Steam Auto-Cloud mirror (desktop only).
+ *  Non-blocking and failure-tolerant. */
+function mirrorSlotToCloud(slot: number, json: string): void {
+  if (!isDesktop()) return;
+  const steam = getElectronAPI()?.steam;
+  if (!steam?.isAvailable?.()) return;
+  try {
+    void steam.cloudSave(slot, json);
+  } catch { /* non-fatal — IndexedDB remains the authoritative store */ }
+}
+
+/** On the desktop (Steam) build, restore any save slot that is empty locally
+ *  but present in the Steam Auto-Cloud mirror — the cross-machine "load my
+ *  save on a new PC" case. Runs after `hydrateSaveStorage()`.
+ *
+ *  ⚠️ Conflict resolution (both local AND cloud present, newest wins) is NOT
+ *  done here: the local save layer has no embedded wall-clock timestamp to
+ *  compare against the cloud envelope's `savedAt`, and an incorrect overwrite
+ *  would clobber a real save. That path needs on-device two-machine testing
+ *  before it can be trusted, so for now we only fill genuinely empty slots
+ *  (never overwrite a local save). Returns the number of slots restored. */
+export async function restoreCloudSavesIfEmpty(): Promise<number> {
+  if (!isDesktop()) return 0;
+  const steam = getElectronAPI()?.steam;
+  if (!steam?.isAvailable?.()) return 0;
+
+  let restored = 0;
+  for (let slot = 1; slot <= MAX_SLOTS; slot++) {
+    if (readSaveSlot(slot)) continue; // never overwrite a local save
+    let envelope: { savedAt: number; payload: string } | null = null;
+    try {
+      envelope = await steam.cloudLoad(slot);
+    } catch { envelope = null; }
+    if (!envelope?.payload) continue;
+    // Validate it parses before adopting — a corrupt cloud file shouldn't
+    // become a phantom save the slot picker then renders.
+    try {
+      JSON.parse(envelope.payload);
+    } catch (err) {
+      breadcrumbCorruption(`restoreCloudSavesIfEmpty:slot${slot}`, envelope.payload, err);
+      continue;
+    }
+    writeSaveSlot(slot, envelope.payload);
+    restored++;
+  }
+  if (restored > 0) addGameBreadcrumb('save', 'Restored save slot(s) from Steam cloud', { restored });
+  return restored;
 }
 
 /** Read the staging-area payload for a slot. Retained for backward compat —

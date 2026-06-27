@@ -23,7 +23,17 @@ initSentry();
 // exported for UI code (TitleScreen) to await before showing the slot
 // picker — otherwise the picker could render "No Save" on an install
 // whose data lives only in IndexedDB, not localStorage.
-export const saveStorageReady = hydrateSaveStorage();
+//
+// On the desktop (Steam) build, also fold in Steam Auto-Cloud restore so the
+// slot picker reflects any save synced down on a fresh machine before it
+// renders. Both steps tolerate failure (the picker just shows empty slots).
+export const saveStorageReady = hydrateSaveStorage().then(async () => {
+  if (!isDesktop()) return;
+  try {
+    const { restoreCloudSavesIfEmpty } = await import('@/store/helpers/persistence');
+    await restoreCloudSavesIfEmpty();
+  } catch { /* non-fatal — local saves are unaffected */ }
+});
 
 // Promise that resolves once the first frame has painted
 let resolveAppReady: (() => void) | null = null;
@@ -40,6 +50,11 @@ export const signalReady = () => {
 // so the first paint already uses the desktop width (no narrow-column flash).
 if (isDesktop()) {
   document.documentElement.classList.add('desktop');
+}
+
+// Mirror in-game achievement unlocks to Steam (no-op off the Steam build).
+if (isDesktop()) {
+  void import('@/utils/steamAchievements').then(m => m.initSteamAchievementSync());
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
