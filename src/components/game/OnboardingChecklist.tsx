@@ -37,6 +37,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Banknote, Search, Calendar, UserPlus, Check, X, ChevronRight, ArrowRight } from 'lucide-react';
 import type { GameScreen } from '@/types/game';
 import { hapticLight } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 import { readSessionJson, writeSessionJson, STORAGE_KEYS } from '@/store/helpers/persistence';
 import { LIQUID_GLASS_SURFACE } from '@/components/game/GlassPanel';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -276,7 +277,7 @@ export function OnboardingChecklist() {
 
           <h3 className="relative text-base font-bold text-foreground font-display mb-1">Getting Started</h3>
           <p className="relative text-[11px] text-foreground/70 mb-3 leading-snug">
-            Tap any step for an exact walkthrough — we'll tell you which buttons to press.
+            {pointerVerb()} any step for an exact walkthrough — we'll tell you which buttons to press.
           </p>
 
           <ul className="relative space-y-1.5">
