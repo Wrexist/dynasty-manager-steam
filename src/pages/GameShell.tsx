@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { TopBar } from '@/components/game/TopBar';
 import { BottomNav } from '@/components/game/BottomNav';
 import { DesktopNav } from '@/components/game/DesktopNav';
+import { KeyboardShortcutsOverlay } from '@/components/game/KeyboardShortcutsOverlay';
 import { SubNav } from '@/components/game/SubNav';
 import { isDesktop } from '@/platform/desktop';
 import { PageErrorBoundary } from '@/components/game/PageErrorBoundary';
@@ -353,6 +354,7 @@ const GameShell = () => {
           </PageErrorBoundary>
         </main>
         {!desktop && <BottomNav />}
+        {desktop && <KeyboardShortcutsOverlay />}
         <ContractNegotiation />
       </div>
       </InfoTipProvider>
