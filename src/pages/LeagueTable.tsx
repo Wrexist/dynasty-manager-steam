@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, ChevronDown, Searc
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { LEAGUES, getLeaguesByCountry } from '@/data/league';
+import { pointerVerb } from '@/utils/helpers';
 import { FlagIcon } from '@/components/game/FlagIcon';
 import { PageHint } from '@/components/game/PageHint';
 import { getQualificationZones } from '@/utils/leagueRanking';
@@ -186,7 +187,7 @@ const LeagueTable = () => {
       <PageHint
         screen="league-table"
         title="League Table"
-        body="Track standings, browse weekly fixtures, and see top scorers and assist leaders. Green zones mean promotion, red zones mean relegation. Tap any team to view their details."
+        body={`Track standings, browse weekly fixtures, and see top scorers and assist leaders. Green zones mean promotion, red zones mean relegation. ${pointerVerb()} any team to view their details.`}
       />
 
       {/* League Selector */}

@@ -18,7 +18,7 @@ import { IncomingOfferNegotiation } from '@/components/game/IncomingOfferNegotia
 import { PageHint } from '@/components/game/PageHint';
 import { getTransferWindows, OFFER_EXPIRY_WEEKS, FREE_AGENT_DEFAULT_CONTRACT_YEARS, PRE_SEASON_END } from '@/config/transfers';
 import { MAX_SQUAD_SIZE, LOAN_MIN_WEEKS_BEFORE_RECALL } from '@/config/gameBalance';
-import { formatMoney } from '@/utils/helpers';
+import { formatMoney, pointerVerb } from '@/utils/helpers';
 import { getPerformanceMultiplier, getMaxFreeAgentOverall, getLoanBuyFee } from '@/utils/transferOffers';
 import { TransferPlayerCard } from '@/components/game/TransferPlayerCard';
 import { LEAGUES } from '@/data/league';
@@ -537,7 +537,7 @@ const TransferPage = () => {
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 mt-1">
                   {hasFilters
-                    ? showShortlistOnly ? 'Tap the bookmark icon on a player to add them' : 'Try adjusting your search, position, or division filters'
+                    ? showShortlistOnly ? `${pointerVerb()} the bookmark icon on a player to add them` : 'Try adjusting your search, position, or division filters'
                     : 'Check back during the transfer window'}
                 </p>
               </GlassPanel>

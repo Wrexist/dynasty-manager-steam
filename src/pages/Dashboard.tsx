@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { getSuffix, resolveClub, formatMoney } from '@/utils/helpers';
+import { getSuffix, resolveClub, formatMoney, pointerVerb } from '@/utils/helpers';
 import { getConfidenceColor, getFanConfidenceColor, getFanConfidence } from '@/utils/uiHelpers';
 import { usePlayerClub, useLeaguePosition, useCurrentMatch, useUnreadCount, findTournamentMatch, useSquadAverageMorale } from '@/hooks/useGameSelectors';
 import { GlassPanel } from '@/components/game/GlassPanel';
@@ -1852,7 +1852,7 @@ const Dashboard = () => {
               <p className="text-xs text-muted-foreground">+{expiringPlayers.length - 3} more</p>
             )}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-2">Tap to view squad and renew contracts</p>
+          <p className="text-[10px] text-muted-foreground mt-2">{pointerVerb()} to view squad and renew contracts</p>
         </GlassPanel>
       )}
 

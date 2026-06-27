@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { tierForOvr, tierGradient } from './packHelpers';
 import { PACK_ANIM } from '@/config/packs';
 import { hapticMedium } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 import { PlayerCard, PLAYER_CARD_SIZE_PX } from '@/components/game/PlayerCard';
 import { PackCardAura } from './PackCardAura';
 
@@ -76,7 +77,7 @@ export const PackCard = memo(function PackCard({ player, revealed, onReveal, ent
       initial={{ opacity: 0, y: 120, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: entranceDelay, type: 'spring', stiffness: 180, damping: 24 }}
-      aria-label={revealed ? undefined : 'Tap to reveal'}
+      aria-label={revealed ? undefined : `${pointerVerb()} to reveal`}
     >
       {/* Rarity aura — appears the instant the card turns face-up, so the
           pull's tier reads as a glow before the stats register. */}
@@ -149,7 +150,7 @@ export const PackCard = memo(function PackCard({ player, revealed, onReveal, ent
               className="text-[9px] uppercase tracking-widest text-white/60 font-semibold mt-0.5"
               style={{ textShadow: '0 1px 2px rgba(0,0,0,0.55)' }}
             >
-              Tap to reveal
+              {pointerVerb()} to reveal
             </span>
           </div>
           {!revealed && !prefersReducedMotion && (

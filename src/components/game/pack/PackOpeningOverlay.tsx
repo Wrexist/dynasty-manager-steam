@@ -5,7 +5,7 @@ import type { PackPlayerPlacement, PackTierKey, Player } from '@/types/game';
 import { MAX_WALKOUTS_PER_PACK, PACK_ANIM, PACK_TIER_MAP, WALKOUT_OVR_THRESHOLD } from '@/config/packs';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { hapticHeavy, hapticLight, hapticMedium } from '@/utils/haptics';
-import { formatMoney } from '@/utils/helpers';
+import { formatMoney, pointerVerb } from '@/utils/helpers';
 import { PLAYER_CARD_SIZE_PX } from '@/components/game/PlayerCard';
 import { PackArt } from './PackArt';
 import { PackCard } from './PackCard';
@@ -692,7 +692,7 @@ export function PackOpeningOverlay({ tier, players, pityTriggered, onClose, onKe
           <motion.div
             key="pack"
             role={phase === 'arrival' || phase === 'charge' ? 'button' : undefined}
-            aria-label={phase === 'arrival' || phase === 'charge' ? 'Tap to rip open the pack' : undefined}
+            aria-label={phase === 'arrival' || phase === 'charge' ? `${pointerVerb()} to rip open the pack` : undefined}
             tabIndex={phase === 'arrival' || phase === 'charge' ? 0 : -1}
             onClick={phase === 'arrival' || phase === 'charge' ? tapToRip : undefined}
             onKeyDown={(e) => {
@@ -1019,7 +1019,7 @@ export function PackOpeningOverlay({ tier, players, pityTriggered, onClose, onKe
               animate={prefersReducedMotion ? undefined : { opacity: [0.55, 1, 0.55] }}
               transition={prefersReducedMotion ? undefined : { duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              Tap to open
+              {pointerVerb()} to open
             </motion.span>
           </motion.div>
         )}
@@ -1440,7 +1440,7 @@ export function PackOpeningOverlay({ tier, players, pityTriggered, onClose, onKe
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
             >
-              Tap all to reveal
+              {pointerVerb()} all to reveal
             </motion.button>
           )}
 

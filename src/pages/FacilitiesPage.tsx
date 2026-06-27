@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { FACILITY_COST_PER_LEVEL, FACILITY_BASE_UPGRADE_WEEKS, FACILITY_MAX_LEVEL, STAND_COST_PER_LEVEL, STAND_BASE_UPGRADE_WEEKS, STADIUM_INCOME_PER_LEVEL } from '@/config/gameBalance';
 import { PageHint } from '@/components/game/PageHint';
 import { STAND_INFO, getEffectiveStadiumLevel, getStadiumCapacity, getStadiumTier, getRecommendedStand } from '@/utils/facilities';
+import { pointerVerb } from '@/utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { StandKey, FacilityTab } from '@/types/game';
 
@@ -235,7 +236,7 @@ const FacilitiesPage = () => {
                   <span className="text-muted-foreground">tap the {STAND_INFO[recommendedStand].label} to upgrade next</span>
                 </p>
               ) : (
-                <p className="text-[10px] text-muted-foreground text-center">Tap a stand to view details and upgrade</p>
+                <p className="text-[10px] text-muted-foreground text-center">{pointerVerb()} a stand to view details and upgrade</p>
               )
             )}
             </div>

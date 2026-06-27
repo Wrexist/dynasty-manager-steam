@@ -19,6 +19,7 @@ import { BenchStrip } from './BenchStrip';
 import { YellowCardIcon, RedCardIcon } from './PlayerAvatar';
 import { computeSmartSub } from '@/utils/substitutionLogic';
 import { optimizeStarterPositions } from '@/utils/autoFillLineup';
+import { pointerVerb } from '@/utils/helpers';
 import { successToast, infoToast } from '@/utils/gameToast';
 import { toast } from 'sonner';
 
@@ -497,7 +498,7 @@ export function SubstitutionSheet({ open, onOpenChange, onSubMade, matchMinute, 
       {/* Bench section */}
       <div className="mt-2">
         <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5 px-1">
-          {selectedOutId ? 'Select Replacement' : 'Tap a player on the pitch to sub them out'}
+          {selectedOutId ? 'Select Replacement' : `${pointerVerb()} a player on the pitch to sub them out`}
         </p>
 
         {selectedOutId && availableBenchCount === 0 && (

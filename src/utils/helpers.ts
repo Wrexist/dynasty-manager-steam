@@ -1,5 +1,13 @@
 import type { Message, Club, VirtualClub } from '@/types/game';
 import { MAX_MESSAGES } from '@/config/gameBalance';
+import { isDesktop } from '@/platform/desktop';
+
+/** Platform-appropriate pointer-interaction verb: desktop (Steam) users click
+ *  with a mouse, touch users tap. Capitalised by default; pass `false` for the
+ *  mid-sentence lowercase form. Keeps on-screen instructions native to the
+ *  device without per-call-site branching. */
+export const pointerVerb = (capitalised = true): string =>
+  isDesktop() ? (capitalised ? 'Click' : 'click') : (capitalised ? 'Tap' : 'tap');
 
 export const pick = <T>(arr: T[]): T => {
   if (arr.length === 0) throw new Error('pick() called with empty array');

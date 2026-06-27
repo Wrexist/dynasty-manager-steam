@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo, type ReactNode } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
 import type { Club, Player } from '@/types/game';
-import { resolveClub } from '@/utils/helpers';
+import { resolveClub, pointerVerb } from '@/utils/helpers';
 import { guardAsync } from '@/utils/asyncGuard';
 import { GlassPanel } from '@/components/game/GlassPanel';
 import { EmptyState } from '@/components/EmptyState';
@@ -665,7 +665,7 @@ const MatchReview = () => {
           <GlassPanel className="p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-foreground">Top Performers</h3>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Tap to view</span>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{pointerVerb()} to view</span>
             </div>
             <div className="space-y-2.5">
               {topThree.map((r, idx) => {
