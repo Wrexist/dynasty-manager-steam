@@ -333,7 +333,7 @@ const GameShell = () => {
           // ignores edge-originating touches).
           className="touch-pan-y"
           style={desktop
-            ? { paddingTop: '6.5rem', paddingBottom: '2.5rem' }
+            ? { paddingTop: '3.5rem', paddingBottom: '1.5rem', paddingLeft: '15rem' }
             : { paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
           {...swipeHandlers}
         >
