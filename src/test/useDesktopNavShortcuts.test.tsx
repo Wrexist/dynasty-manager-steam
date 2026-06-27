@@ -77,4 +77,27 @@ describe('useDesktopNavShortcuts', () => {
     press('2');
     expect(useGameStore.getState().currentScreen).toBe('dashboard');
   });
+
+  it('Escape steps back from a detail screen to its parent', () => {
+    act(() => { useGameStore.setState({ currentScreen: 'finance' } as Partial<ReturnType<typeof useGameStore.getState>>); });
+    renderHook(() => useDesktopNavShortcuts());
+    press('Escape');
+    expect(useGameStore.getState().currentScreen).toBe('dashboard');
+  });
+
+  it('Escape is a no-op on a main tab (left for dialogs/popovers)', () => {
+    renderHook(() => useDesktopNavShortcuts()); // currentScreen = dashboard (a main tab)
+    press('Escape');
+    expect(useGameStore.getState().currentScreen).toBe('dashboard');
+  });
+
+  it('Escape does not navigate while a dialog is open', () => {
+    act(() => { useGameStore.setState({ currentScreen: 'finance' } as Partial<ReturnType<typeof useGameStore.getState>>); });
+    renderHook(() => useDesktopNavShortcuts());
+    const dialog = document.createElement('div');
+    dialog.setAttribute('role', 'dialog');
+    document.body.appendChild(dialog);
+    press('Escape');
+    expect(useGameStore.getState().currentScreen).toBe('finance');
+  });
 });

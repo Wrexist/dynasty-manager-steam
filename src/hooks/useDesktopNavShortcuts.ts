@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useGameStore } from '@/store/gameStore';
-import { MAIN_TABS, WC_MAIN_TABS, UNEMPLOYED_MAIN_TABS } from '@/config/navigation';
+import { MAIN_TABS, WC_MAIN_TABS, UNEMPLOYED_MAIN_TABS, DETAIL_SCREENS, BACK_TARGET } from '@/config/navigation';
 import { useMatchLocked, useCareerUnemployed } from '@/hooks/useGameSelectors';
 import { isDesktop } from '@/platform/desktop';
 import type { GameScreen } from '@/types/game';
@@ -21,12 +21,16 @@ function shouldIgnoreShortcut(e: KeyboardEvent): boolean {
 }
 
 /**
- * Desktop-only keyboard navigation: number keys 1..N jump to the Nth main
- * navigation tab (the same set the DesktopNav renders, respecting world-cup /
- * unemployed career states). No-op on mobile/web, while a match is locked, when
- * a field is focused, or when a dialog is open.
+ * Desktop-only keyboard navigation. No-op on mobile/web, while a match is
+ * locked, when a field is focused, or when a dialog is open.
  *
- * Mounted once from GameShell. Reuses the MAIN_TABS config so it never drifts
+ *  • Number keys 1..N jump to the Nth main navigation tab (the same set the
+ *    DesktopNav renders, respecting world-cup / unemployed career states).
+ *  • Escape steps back from a detail screen to its parent — the same target
+ *    the TopBar's back button uses — so the keyboard mirrors the visible
+ *    navigation. On a main tab (no parent) Escape is left for Radix/dialogs.
+ *
+ * Mounted once from GameShell. Reuses the navigation config so it never drifts
  * from the visible nav.
  */
 export function useDesktopNavShortcuts(): void {
@@ -45,8 +49,22 @@ export function useDesktopNavShortcuts(): void {
 
     const handler = (e: KeyboardEvent) => {
       if (matchLocked) return;
-      if (e.key < '1' || e.key > '9') return;
       if (shouldIgnoreShortcut(e)) return;
+
+      // Escape → back. Only on detail screens (those with a parent); on a main
+      // tab there's nowhere to go, so leave Escape to close any popovers.
+      if (e.key === 'Escape') {
+        const { currentScreen, previousScreen } = useGameStore.getState();
+        const isMainTab = tabs.includes(currentScreen) || !DETAIL_SCREENS.includes(currentScreen);
+        if (isMainTab) return;
+        const rawBack = BACK_TARGET[currentScreen] || previousScreen || 'dashboard';
+        const back = isUnemployed && (rawBack === 'dashboard' || rawBack === 'squad') ? 'job-market' : rawBack;
+        e.preventDefault();
+        setScreen(back);
+        return;
+      }
+
+      if (e.key < '1' || e.key > '9') return;
       const idx = Number(e.key) - 1;
       if (idx < 0 || idx >= tabs.length) return;
       e.preventDefault();
