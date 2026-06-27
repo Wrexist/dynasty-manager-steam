@@ -12,6 +12,10 @@ import { useCareerUnemployed } from '@/hooks/useGameSelectors';
 // claims a key the hook doesn't honour. Rendered only on the desktop (Steam)
 // build by GameShell.
 
+/** Window event that toggles the shortcuts sheet — dispatched by the sidebar's
+ *  keyboard button so the "?" binding is reachable by mouse too. */
+export const SHORTCUTS_TOGGLE_EVENT = 'dynasty:toggle-shortcuts';
+
 const TAB_LABEL: Partial<Record<GameScreen, string>> = {
   dashboard: 'Home', squad: 'Squad', tactics: 'Tactics', transfers: 'Market',
   'international-tournament': 'Tournament', 'job-market': 'Jobs', 'career-overview': 'Career', inbox: 'Inbox',
@@ -49,7 +53,14 @@ export function KeyboardShortcutsOverlay() {
     // Capture phase so the Escape-to-close wins the race against the document
     // keydown listener in useDesktopNavShortcuts.
     document.addEventListener('keydown', onKey, true);
-    return () => document.removeEventListener('keydown', onKey, true);
+    // A click target elsewhere (the sidebar's keyboard button) can toggle the
+    // sheet too, so the "?" binding is discoverable for mouse users.
+    const onToggle = () => setOpen(o => !o);
+    window.addEventListener(SHORTCUTS_TOGGLE_EVENT, onToggle);
+    return () => {
+      document.removeEventListener('keydown', onKey, true);
+      window.removeEventListener(SHORTCUTS_TOGGLE_EVENT, onToggle);
+    };
   }, [open]);
 
   const isWorldCup = gameMode === 'world-cup';

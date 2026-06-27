@@ -4,11 +4,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { GameScreen } from '@/types/game';
 import {
   LayoutDashboard, Users, Target, ArrowLeftRight, Briefcase, User, Mail, Trophy,
-  Table2, CalendarDays, Dumbbell, UserCog, GraduationCap, Search, Package,
+  Table2, CalendarDays, Dumbbell, UserCog, GraduationCap, Search, Package, Keyboard,
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { MoreDrawer } from './MoreDrawer';
+import { SHORTCUTS_TOGGLE_EVENT } from './KeyboardShortcutsOverlay';
 import { hapticLight } from '@/utils/haptics';
 import { useMatchLocked, useCareerUnemployed } from '@/hooks/useGameSelectors';
 
@@ -183,6 +184,20 @@ export function DesktopNav() {
           ))}
         </div>
       )}
+      {/* Discoverable entry point for the "?" keyboard-shortcuts sheet. */}
+      <div className="px-3 pt-2 flex">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event(SHORTCUTS_TOGGLE_EVENT))}
+          title="Keyboard shortcuts (?)"
+          aria-keyshortcuts="?"
+          className="flex items-center gap-3 w-full h-9 px-3 rounded-lg text-[13px] font-medium text-foreground/60 hover:text-foreground hover:bg-foreground/[0.06] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Keyboard className="w-4 h-4" />
+          <span>Shortcuts</span>
+          <kbd className="ml-auto min-w-[1.4rem] px-1.5 h-5 inline-flex items-center justify-center rounded-md border border-border/70 bg-muted/40 text-[11px] font-semibold">?</kbd>
+        </button>
+      </div>
       {!isWorldCup && (
         <div className="px-3 pb-4 flex">
           <MoreDrawer disabled={matchLocked} open={drawerOpen} onOpenChange={setDrawerOpen} />
