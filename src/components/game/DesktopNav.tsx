@@ -45,16 +45,16 @@ const worldCupTabs: Tab[] = [
 ];
 
 // Contextual sub-tabs surfaced (indented) under their parent section when the
-// active screen is inside that group.
+// active screen is inside that group. The parent row already navigates to (and
+// highlights for) the group's lead screen — Squad / Market — so these list only
+// the *sibling* screens, avoiding a redundant duplicate row under the parent.
 const SUB_TABS: Partial<Record<GameScreen, Tab[]>> = {
   squad: [
-    { screen: 'squad', label: 'Squad', icon: Users },
     { screen: 'training', label: 'Training', icon: Dumbbell },
     { screen: 'staff', label: 'Staff', icon: UserCog },
     { screen: 'youth-academy', label: 'Youth', icon: GraduationCap },
   ],
   transfers: [
-    { screen: 'transfers', label: 'Market', icon: ArrowLeftRight },
     { screen: 'scouting', label: 'Scouting', icon: Search },
     { screen: 'packs', label: 'Packs', icon: Package },
   ],
