@@ -91,17 +91,20 @@ export function DesktopNav() {
     return null;
   };
 
-  const NavButton = ({ tab, layoutId, shortcut, nested }: { tab: Tab; layoutId: string; shortcut?: number; nested?: boolean }) => {
-    const active = nested
-      ? currentScreen === tab.screen
-      : tab.group ? tab.group.includes(currentScreen) : currentScreen === tab.screen;
+  // `sectionActive` marks a mother tab whose *child* is the current screen (the
+  // active screen is in its group but isn't the mother screen itself). Such a
+  // mother reads as an expanded section header — a subtle tint, not a competing
+  // solid pill — so the strong pill always lands on the single active leaf and
+  // the parent→child relationship is unambiguous.
+  const NavButton = ({ tab, layoutId, shortcut, nested, sectionActive }: { tab: Tab; layoutId: string; shortcut?: number; nested?: boolean; sectionActive?: boolean }) => {
+    const exact = currentScreen === tab.screen;
     const Icon = tab.icon;
     const badge = badgeFor(tab.screen);
     return (
       <button
         type="button"
         onClick={() => { if (matchLocked) return; hapticLight(); setScreen(tab.screen); }}
-        aria-current={active ? 'page' : undefined}
+        aria-current={exact ? 'page' : sectionActive ? 'true' : undefined}
         aria-disabled={matchLocked || undefined}
         // Desktop number-key shortcut (see useDesktopNavShortcuts): surface it on
         // hover + to assistive tech so the keyboard nav is discoverable.
@@ -110,12 +113,14 @@ export function DesktopNav() {
         className={cn(
           'relative flex items-center gap-3 w-full rounded-lg font-medium transition-colors text-left',
           'outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-          nested ? 'h-9 pl-11 pr-3 text-[13px]' : 'h-10 px-3 text-sm',
+          nested ? 'h-9 px-3 text-[13px]' : 'h-10 px-3 text-sm',
           matchLocked ? 'opacity-50 cursor-not-allowed pointer-events-none'
-            : active ? 'text-primary-foreground' : 'text-foreground/70 hover:text-foreground hover:bg-foreground/[0.06] cursor-pointer',
+            : exact ? 'text-primary-foreground'
+            : sectionActive ? 'text-primary bg-primary/10 cursor-pointer'
+            : 'text-foreground/70 hover:text-foreground hover:bg-foreground/[0.06] cursor-pointer',
         )}
       >
-        {active && (
+        {exact && (
           <motion.span
             layoutId={layoutId}
             initial={false}
@@ -151,15 +156,20 @@ export function DesktopNav() {
             matching useDesktopNavShortcuts which keys off the same tab order.
             When a section's group is active, its sub-tabs nest directly below. */}
         {activeTabs.map((tab, i) => {
-          const subTabs = !isWorldCup && !isUnemployed && tab.group?.includes(currentScreen)
-            ? SUB_TABS[tab.screen] ?? null
-            : null;
+          const inGroup = !isWorldCup && !isUnemployed && !!tab.group?.includes(currentScreen);
+          const subTabs = inGroup ? SUB_TABS[tab.screen] ?? null : null;
           return (
             <div key={tab.screen} className="flex flex-col gap-1">
-              <NavButton tab={tab} layoutId="desktop-nav-pill" shortcut={i + 1} />
-              {subTabs && subTabs.map(sub => (
-                <NavButton key={`sub-${sub.screen}`} tab={sub} layoutId="desktop-subnav-pill" nested />
-              ))}
+              <NavButton tab={tab} layoutId="desktop-nav-pill" shortcut={i + 1} sectionActive={inGroup && currentScreen !== tab.screen} />
+              {subTabs && (
+                // Children sit under a connecting tree rail, indented from the
+                // mother icon, so the grouping reads at a glance.
+                <div className="relative ml-[1.55rem] pl-3 flex flex-col gap-1 border-l border-primary/40">
+                  {subTabs.map(sub => (
+                    <NavButton key={`sub-${sub.screen}`} tab={sub} layoutId="desktop-subnav-pill" nested />
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
