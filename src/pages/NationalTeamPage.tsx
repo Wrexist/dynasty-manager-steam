@@ -4,6 +4,7 @@ import { useGameStore } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { getNation, getNationRanking } from '@/data/nations';
 import { getUpcomingTournament } from '@/utils/international';
+import { pointerVerb } from '@/utils/helpers';
 import { cn } from '@/lib/utils';
 import { Globe, Users, Trophy, ChevronRight, ChevronDown, CheckCircle, XCircle, Calendar, TrendingUp, Shuffle, Flag, X, Check } from 'lucide-react';
 import { FlagIcon } from '@/components/game/FlagIcon';
@@ -609,7 +610,7 @@ const NationalTeamPage = () => {
         {editingSquad ? (
           <div className="space-y-4">
             <p className="text-[10px] text-muted-foreground px-1">
-              Tap a card to call up or release. Showing top {POOL_DISPLAY_LIMIT} eligible players from {managerNationality}.
+              {pointerVerb()} a card to call up or release. Showing top {POOL_DISPLAY_LIMIT} eligible players from {managerNationality}.
             </p>
             {POSITION_GROUPS.map(group => {
               const poolPlayers = groupedPool[group.key as PositionBucket];

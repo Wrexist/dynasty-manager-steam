@@ -10,6 +10,7 @@ import { TRANSFER_TALK_RETRY_WEEKS } from '@/config/personality';
 import { STORYLINE_CHAINS } from '@/data/storylineChains';
 import { PageHint } from '@/components/game/PageHint';
 import { hapticLight, hapticMedium } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 import { readSessionJson, writeSessionJson, STORAGE_KEYS } from '@/store/helpers/persistence';
 
 /** Shape of the persisted Inbox filter preference (see STORAGE_KEYS.INBOX_FILTER). */
@@ -266,7 +267,7 @@ const InboxPage = () => {
               Your subscription couldn't be renewed. Update your payment method to keep Pro features active.
             </p>
             <p className="text-[10px] text-amber-400 mt-1 inline-flex items-center gap-0.5">
-              Tap to manage subscription
+              {pointerVerb()} to manage subscription
               <ChevronRight className="w-3 h-3 shrink-0" aria-hidden />
             </p>
           </div>

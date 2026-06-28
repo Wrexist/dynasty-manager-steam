@@ -13,7 +13,7 @@ import { GlassPanel } from '@/components/game/GlassPanel';
 import { SubstitutionSheet } from '@/components/game/SubstitutionSheet';
 import { Button } from '@/components/ui/button';
 import { MatchEvent, Match, Club, ContinentalTournamentState, TeamTalkType } from '@/types/game';
-import { resolveClub } from '@/utils/helpers';
+import { resolveClub, pointerVerb } from '@/utils/helpers';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, FastForward, Pause, RefreshCw, Zap, Flame, Shield, AlertTriangle, Calendar, MapPin, Trophy, Hand, Clock, type LucideIcon } from 'lucide-react';
@@ -1712,7 +1712,7 @@ const MatchDayInner = () => {
                     const next = available[(idx + 1) % available.length];
                     setSpeed(next.value);
                   }}
-                  aria-label={`Match speed: ${MATCH_SPEEDS.find(s => s.value === speed)?.label ?? 'Normal'}. Tap to change.`}
+                  aria-label={`Match speed: ${MATCH_SPEEDS.find(s => s.value === speed)?.label ?? 'Normal'}. ${pointerVerb()} to change.`}
                   className={cn(
                     "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold active:scale-[0.97] border transition-all",
                     speed < DEFAULT_MATCH_SPEED

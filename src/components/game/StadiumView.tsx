@@ -3,6 +3,7 @@ import type { StadiumStands, StandKey } from '@/types/game';
 import { STAND_INFO, getEffectiveStadiumLevel } from '@/utils/facilities';
 import { FACILITY_MAX_LEVEL } from '@/config/gameBalance';
 import { hapticLight } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 
 interface StadiumViewProps {
   stands: StadiumStands;
@@ -406,7 +407,7 @@ function StandRect({ x, y, width, height, standKey, level, selected, upgrading, 
       className="cursor-pointer outline-none"
       role="button"
       tabIndex={0}
-      aria-label={`${STAND_INFO[standKey].label}, level ${level}.${recommended ? ' Recommended next upgrade.' : ''} ${selected ? 'Selected.' : 'Tap to select.'}`}
+      aria-label={`${STAND_INFO[standKey].label}, level ${level}.${recommended ? ' Recommended next upgrade.' : ''} ${selected ? 'Selected.' : `${pointerVerb()} to select.`}`}
     >
       {/* Recommended halo — soft pulse behind the stand */}
       {recommended && !selected && (

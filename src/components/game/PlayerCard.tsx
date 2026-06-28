@@ -5,6 +5,7 @@ import type { Player, PlayerAttributes } from '@/types/game';
 import { FlagIcon } from '@/components/game/FlagIcon';
 import { cn } from '@/lib/utils';
 import { hapticLight } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 import { getPlayerCardArt, getFitnessHexColor } from '@/utils/uiHelpers';
 import { getPersonalityLabel } from '@/utils/personality';
 
@@ -184,7 +185,7 @@ export const PlayerCard = memo(function PlayerCard({
   const viewLabel = statView === 0 ? 'stats' : statView === 1 ? 'profile' : 'condition';
   const ariaLabel =
     effectiveInteractive === 'cycle'
-      ? `${player.firstName} ${player.lastName}, ${player.overall} overall. Showing ${viewLabel}. Tap to cycle stat views.`
+      ? `${player.firstName} ${player.lastName}, ${player.overall} overall. Showing ${viewLabel}. ${pointerVerb()} to cycle stat views.`
       : effectiveInteractive === 'detail'
         ? `${player.firstName} ${player.lastName}, ${player.overall} overall. Open details.`
         : `${player.firstName} ${player.lastName}, ${player.overall} overall.`;

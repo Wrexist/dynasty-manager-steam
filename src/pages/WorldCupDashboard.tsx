@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { guardAsync } from '@/utils/asyncGuard';
 import { hapticMedium } from '@/utils/haptics';
+import { pointerVerb } from '@/utils/helpers';
 import { useMatchLocked } from '@/hooks/useGameSelectors';
 import { getPlayerNextWorldCupMatch } from '@/utils/internationalMatch';
 import { getNation } from '@/data/nations';
@@ -150,7 +151,7 @@ const WorldCupDashboard = () => {
               <Trophy className="w-9 h-9 text-primary mx-auto mb-2" />
             </motion.div>
             <p className="text-lg font-bold text-foreground font-display">World Champions!</p>
-            <p className="text-xs text-primary font-medium mt-0.5">Tap to lift the trophy</p>
+            <p className="text-xs text-primary font-medium mt-0.5">{pointerVerb()} to lift the trophy</p>
           </GlassPanel>
         </motion.div>
       ) : eliminated ? (

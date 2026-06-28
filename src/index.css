@@ -527,6 +527,26 @@ input[type="range"]:not(.age-slider)::-webkit-slider-thumb {
   }
 }
 
+/* ── Desktop hover affordance ────────────────────────────────────────────
+   Touch builds have no hover, so clickable cards give no mouse feedback. On
+   the desktop build, the project-wide clickable glass card (GlassPanel with an
+   onClick → `.glass-surface[role="button"]`) brightens and lifts its shadow on
+   hover so the UI feels mouse-responsive. Pure filter/box-shadow — no
+   `transform`, so it never collides with the panel's Tailwind press-scale. */
+@media (min-width: 1024px) {
+  .desktop .glass-surface[role="button"] {
+    transition: box-shadow 0.16s ease, filter 0.16s ease;
+  }
+  .desktop .glass-surface[role="button"]:hover {
+    filter: brightness(1.08);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+      0 14px 32px -18px rgba(0, 0, 0, 0.6);
+  }
+}
+
 /* ── Desktop (Electron / Steam) themed scrollbars ───────────────────────
    The default Chromium scrollbar reads as a generic web app and clashes with
    the dark premium UI. Theme it on the desktop build only (scoped to .desktop)

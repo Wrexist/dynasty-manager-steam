@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { TopBar } from '@/components/game/TopBar';
 import { BottomNav } from '@/components/game/BottomNav';
 import { DesktopNav } from '@/components/game/DesktopNav';
+import { KeyboardShortcutsOverlay } from '@/components/game/KeyboardShortcutsOverlay';
 import { SubNav } from '@/components/game/SubNav';
 import { isDesktop } from '@/platform/desktop';
 import { PageErrorBoundary } from '@/components/game/PageErrorBoundary';
@@ -333,7 +334,7 @@ const GameShell = () => {
           // ignores edge-originating touches).
           className="touch-pan-y"
           style={desktop
-            ? { paddingTop: '6.5rem', paddingBottom: '2.5rem' }
+            ? { paddingTop: '3.5rem', paddingBottom: '1.5rem', paddingLeft: '15rem' }
             : { paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
           {...swipeHandlers}
         >
@@ -353,6 +354,7 @@ const GameShell = () => {
           </PageErrorBoundary>
         </main>
         {!desktop && <BottomNav />}
+        {desktop && <KeyboardShortcutsOverlay />}
         <ContractNegotiation />
       </div>
       </InfoTipProvider>
